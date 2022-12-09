@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 8.0.1, 2022-12-09T14:40:20. -->
+<!-- Written by QtCreator 8.0.1, 2022-12-09T15:17:17. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -152,7 +152,7 @@
 -DCMAKE_CXX_COMPILER:FILEPATH=%{Compiler:Executable:Cxx}
 -DCMAKE_CXX_FLAGS_INIT:STRING=%{Qt:QML_DEBUG_FLAG}
 %{CMAKE_OSX_ARCHITECTURES:DefaultFlag}</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/joshbenzon/Desktop/build-cs1230-final-project-2-Qt_6_2_4_for_macOS-Release</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/joshbenzon/Desktop/build-cs1230-final-project-Qt_6_2_4_for_macOS-Release</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <valuelist type="QVariantList" key="CMakeProjectManager.MakeStep.BuildTargets">
@@ -357,8 +357,8 @@
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory">/Users/joshbenzon/Desktop/cs1230-final-project 2</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/Users/joshbenzon/Desktop/build-cs1230-final-project-2-Qt_6_2_4_for_macOS-Release</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory">/Users/joshbenzon/Desktop/cs1230-final-project</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/Users/joshbenzon/Desktop/build-cs1230-final-project-Qt_6_2_4_for_macOS-Release</value>
    </valuemap>
    <value type="qlonglong" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

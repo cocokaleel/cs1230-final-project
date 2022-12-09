@@ -70,8 +70,8 @@ std::vector<float> TerrainGenerator::generateTerrain() {
     //verts = std::vector<float>(0);
     verts.reserve(m_resolution * m_resolution * 6);
 
-    for(int x = 0; x < m_resolution; x++) {
-        for(int y = 0; y < m_resolution; y++) {
+    for(int x = 0; x < m_resolution - 1; x++) {
+        for(int y = 0; y < m_resolution - 1; y++) {
 
             int x1 = x;
             int y1 = y;

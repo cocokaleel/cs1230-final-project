@@ -19,7 +19,7 @@ void Canvas2D::init() {
  * @brief Canvas2D::clearCanvas sets all canvas pixels to blank white
  */
 void Canvas2D::clearCanvas() {
-    m_data.assign(m_width * m_height, RGBA{255, 255, 255, 255});
+    m_data.assign(m_width * m_height, RGBA{122, 122, 122, 255});
     settings.imagePath = "";
     displayImage();
 }
