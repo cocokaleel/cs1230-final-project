@@ -104,6 +104,8 @@ void GLWidget::resizeGL(int w, int h)
 
 void GLWidget::mousePressEvent(QMouseEvent *event) {
     m_prevMousePos = event->pos();
+//    std::cout << m_prevMousePos.x() << " POS X" << std::endl;
+//    std::cout << m_prevMousePos.y() << " POS Y" << std::endl;
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event) {
