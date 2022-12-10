@@ -16,19 +16,19 @@ TerrainGenerator::TerrainGenerator()
   // Define resolution of terrain generation
   m_resolution = 100;
 
-//  // Generate random vector lookup table
-//  m_lookupSize = 1024;
-//  m_randVecLookup.reserve(m_lookupSize);
+  // Generate random vector lookup table
+  m_lookupSize = 1024;
+  m_randVecLookup.reserve(m_lookupSize);
 
-//  // Initialize random number generator
-//  std::srand(1230);
+  // Initialize random number generator
+  std::srand(1230);
 
-//  // Populate random vector lookup table
-//  for (int i = 0; i < m_lookupSize; i++)
-//  {
-//    m_randVecLookup.push_back(glm::vec2(std::rand() * 2.0 / RAND_MAX - 1.0,
-//                                        std::rand() * 2.0 / RAND_MAX - 1.0));
-//    }
+  // Populate random vector lookup table
+  for (int i = 0; i < m_lookupSize; i++)
+  {
+    m_randVecLookup.push_back(glm::vec2(std::rand() * 2.0 / RAND_MAX - 1.0,
+                                        std::rand() * 2.0 / RAND_MAX - 1.0));
+    }
 }
 
 // Destructor
@@ -180,7 +180,7 @@ void TerrainGenerator::loadImageFromFile(const std::string &file, bool isnotClea
     std::cout << "Loaded heightmap of size " << texture_H << " x " << texture_W << std::endl;
 
     heightInfo = texture_data;
-    heightMapWidth = 100;
+    heightMapWidth = texture_W;
     heightMapHeight = texture_H;
 }
 
@@ -198,7 +198,7 @@ float interpolate(float A, float B, float alpha) {
 float TerrainGenerator::getHeight(float x, float y) {
 
    float z = heightInfo[(heightMapWidth * y) + x]/10;
-    //float z = abs(x) + abs(y);
+    //float z = computePerlin(x/100, y/4) /10;
 
     return z ;
 }
@@ -261,47 +261,47 @@ glm::vec3 TerrainGenerator::getColor(glm::vec3 normal, glm::vec3 position) {
 }
 
 //// Computes the intensity of Perlin noise at some point
-//float TerrainGenerator::computePerlin(float x, float y) {
-//    // Task 1: get grid indices (as ints)
+float TerrainGenerator::computePerlin(float x, float y) {
+    // Task 1: get grid indices (as ints)
 
-//    //round down float x
-//    int indexPt_1 = floor(x);
-//    //round down float x and add 1
-//    int indexPt_2 = indexPt_1 + 1;
-//    //round down float y
-//    int indexPt_3 = floor(y);
-//    //round down float y and add 1
-//    int indexPt_4 = indexPt_3 + 1;
+    //round down float x
+    int indexPt_1 = floor(x);
+    //round down float x and add 1
+    int indexPt_2 = indexPt_1 + 1;
+    //round down float y
+    int indexPt_3 = floor(y);
+    //round down float y and add 1
+    int indexPt_4 = indexPt_3 + 1;
 
-//    glm::vec3 gridIndex1 = glm::vec3(indexPt_1,indexPt_3, 1);
-//    glm::vec3 gridIndex2 = glm::vec3(indexPt_2,indexPt_3, 1);
-//    glm::vec3 gridIndex3 = glm::vec3(indexPt_1,indexPt_4, 1);
-//    glm::vec3 gridIndex4 = glm::vec3(indexPt_2,indexPt_4, 1);
+    glm::vec3 gridIndex1 = glm::vec3(indexPt_1,indexPt_3, 1);
+    glm::vec3 gridIndex2 = glm::vec3(indexPt_2,indexPt_3, 1);
+    glm::vec3 gridIndex3 = glm::vec3(indexPt_1,indexPt_4, 1);
+    glm::vec3 gridIndex4 = glm::vec3(indexPt_2,indexPt_4, 1);
 
-//    glm::vec2 interestPt = glm::vec2(x, y);
+    glm::vec2 interestPt = glm::vec2(x, y);
 
-//    // Task 2: compute offset vectors
-//    glm::vec2 offsetVector1 = glm::vec2(interestPt.x - gridIndex1.x, interestPt.y - gridIndex1.y);
-//    glm::vec2 offsetVector2 = glm::vec2(interestPt.x - gridIndex2.x, interestPt.y - gridIndex2.y);
-//    glm::vec2 offsetVector3 = glm::vec2(interestPt.x - gridIndex3.x, interestPt.y - gridIndex3.y);
-//    glm::vec2 offsetVector4 = glm::vec2(interestPt.x - gridIndex4.x, interestPt.y - gridIndex4.y);
+    // Task 2: compute offset vectors
+    glm::vec2 offsetVector1 = glm::vec2(interestPt.x - gridIndex1.x, interestPt.y - gridIndex1.y);
+    glm::vec2 offsetVector2 = glm::vec2(interestPt.x - gridIndex2.x, interestPt.y - gridIndex2.y);
+    glm::vec2 offsetVector3 = glm::vec2(interestPt.x - gridIndex3.x, interestPt.y - gridIndex3.y);
+    glm::vec2 offsetVector4 = glm::vec2(interestPt.x - gridIndex4.x, interestPt.y - gridIndex4.y);
 
-//    // Task 3: compute the dot product between offset and grid vectors
-//    float dotProd_1 = glm::dot(sampleRandomVector(gridIndex1.x, gridIndex1.y), offsetVector1);
-//    float dotProd_2 = glm::dot(sampleRandomVector(gridIndex2.x, gridIndex2.y), offsetVector2);
-//    float dotProd_3 = glm::dot(sampleRandomVector(gridIndex3.x, gridIndex3.y), offsetVector3);
-//    float dotProd_4 = glm::dot(sampleRandomVector(gridIndex4.x, gridIndex4.y), offsetVector4);
+    // Task 3: compute the dot product between offset and grid vectors
+    float dotProd_1 = glm::dot(sampleRandomVector(gridIndex1.x, gridIndex1.y), offsetVector1);
+    float dotProd_2 = glm::dot(sampleRandomVector(gridIndex2.x, gridIndex2.y), offsetVector2);
+    float dotProd_3 = glm::dot(sampleRandomVector(gridIndex3.x, gridIndex3.y), offsetVector3);
+    float dotProd_4 = glm::dot(sampleRandomVector(gridIndex4.x, gridIndex4.y), offsetVector4);
 
-//    // Task 5: use your interpolation function to produce the final value
-//    //g pos - index point in grid
+    // Task 5: use your interpolation function to produce the final value
+    //g pos - index point in grid
 
-//    float dx = interestPt.x - gridIndex1.x;
-//    float intermediate_G = interpolate(dotProd_1, dotProd_2, dx);
-//    float intermediate_H = interpolate(dotProd_3, dotProd_4, dx);
+    float dx = interestPt.x - gridIndex1.x;
+    float intermediate_G = interpolate(dotProd_1, dotProd_2, dx);
+    float intermediate_H = interpolate(dotProd_3, dotProd_4, dx);
 
-//    float dy = interestPt.y - indexPt_3;
-//    float result = interpolate(intermediate_G, intermediate_H, dy);
+    float dy = interestPt.y - indexPt_3;
+    float result = interpolate(intermediate_G, intermediate_H, dy);
 
-//    // Return 0 as a placeholder
-//    return result;
-//}
+    // Return 0 as a placeholder
+    return result;
+}

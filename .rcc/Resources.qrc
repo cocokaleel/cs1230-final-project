@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="/">
+    <file alias="resources/shader/vertex.vert">C:/Users/Serena/Desktop/CSCI 1230/labs/lab07-terrain-serena-sp/resources/shader/vertex.vert</file>
+    <file alias="resources/shader/fragment.frag">C:/Users/Serena/Desktop/CSCI 1230/labs/lab07-terrain-serena-sp/resources/shader/fragment.frag</file>
+  </qresource>
+</RCC>
+
