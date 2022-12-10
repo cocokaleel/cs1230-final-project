@@ -20,14 +20,7 @@ void MainWindow::setupUI()
     glWidget = new GLWidget;
     glWidget -> setFixedSize(502,502);
 
-
     QHBoxLayout *hLayout = new QHBoxLayout(); // horizontal alignment
-//    QVBoxLayout *vLayout = new QVBoxLayout(); // vertical alignment
-//    vLayout->setAlignment(Qt::AlignHCenter);
-
-
-    //QHBoxLayout *layout = new QHBoxLayout(window);
-//    vLayout->addWidget(button1);
 
     setupCanvas2D();
     QScrollArea *scrollArea = new QScrollArea();
@@ -68,10 +61,6 @@ void MainWindow::setupUI()
     hLayout -> addWidget(brushGroup);
     hLayout->addWidget(scrollArea, 1);
     hLayout->addWidget(glWidget, 1);
-
-
-    //hLayout->addWidget(glWidget_p, 1);
-
 
     this->setLayout(hLayout);
 }
@@ -138,7 +127,7 @@ void MainWindow::onClearButtonClick() {
     m_canvas->resize(m_canvas->parentWidget()->size().width(), m_canvas->parentWidget()->size().height());
 
 
-    glWidget->resetHeightMap(m_canvas->getCanvasData());
+    glWidget->resetHeightMap();
 
 
     std::cout<<m_canvas->parentWidget()->size().width()<<std::endl;

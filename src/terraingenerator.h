@@ -26,6 +26,8 @@ public:
 
     std::vector<float> newHeightMap(std::vector<RGBA> newHeightMapInfo);
 
+    std::vector<float> clearHeightMap();
+
 private:
 
     // Member variables for terrain generation. You will not need to use these directly.
@@ -35,7 +37,7 @@ private:
 
     std::vector<float> verts;
 
-    bool isNotClear = true;
+    bool isResetTerrain = false;
 
     std::vector<float> heightInfo;
     int heightMapWidth;
@@ -64,5 +66,5 @@ private:
     float computePerlin(float x, float y);
 
 
-    void loadImageFromFile(const std::string &file, bool isnotClear);
+    void loadImageFromFile(const std::string &file);
 };

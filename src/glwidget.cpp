@@ -39,10 +39,10 @@ void GLWidget::initializeGL()
     m_terrainVao.bind();
 
     verts = m_terrain.generateTerrain();
-
     m_terrainVbo.create();
     m_terrainVbo.bind();
     m_terrainVbo.allocate(verts.data(),verts.size()*sizeof(GLfloat));
+
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
@@ -59,6 +59,7 @@ void GLWidget::initializeGL()
 
     m_terrainVbo.release();
 
+
     m_world.setToIdentity();
     m_world.translate(QVector3D(-0.5,-0.5,0));
 
@@ -71,9 +72,12 @@ void GLWidget::initializeGL()
 
 
 //reset vertex map//should change the value for future too???
-void GLWidget::resetHeightMap(std::vector<RGBA> paintCanvasData){
-    this -> verts = m_terrain.newHeightMap(paintCanvasData);
-    std::cout<<"trying to clear"<<std::endl;
+void GLWidget::resetHeightMap(){
+    verts = m_terrain.clearHeightMap();
+    m_terrainVbo.bind();
+    m_terrainVbo.allocate(verts.data(),verts.size()*sizeof(GLfloat));
+    m_terrainVbo.release();
+    update();
 };
 
 
@@ -88,7 +92,6 @@ void GLWidget::paintGL()
     m_program->setUniformValue(m_program->uniformLocation("wireshade"),m_terrain.m_wireshade);
 
     int res = m_terrain.getResolution();
-
 
     glPolygonMode(GL_FRONT_AND_BACK,m_terrain.m_wireshade? GL_LINE : GL_FILL);
     glDrawArrays(GL_TRIANGLES, 0, res * res * 6);

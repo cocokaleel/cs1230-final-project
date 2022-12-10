@@ -14,7 +14,7 @@ class GLWidget : public QOpenGLWidget
 public:
     GLWidget(QWidget *parent = nullptr);
 
-    void resetHeightMap(std::vector<RGBA> paintCanvasData);
+    void resetHeightMap();
     ~GLWidget();
 
 protected:
@@ -27,9 +27,11 @@ protected:
 
 private:
     void rebuildMatrices();
+    //void resetVBO(QOpenGLBuffer& vbo, std::vector<GLfloat>vertexData);
 
 
     std::vector<GLfloat> verts;
+    bool isClearing = false;
 
     int m_xRot = 0;
     int m_yRot = 0;
@@ -37,6 +39,7 @@ private:
     QOpenGLShaderProgram *m_program = nullptr;
     QOpenGLVertexArrayObject m_terrainVao;
     QOpenGLBuffer m_terrainVbo;
+
     QMatrix4x4 m_proj;
     QMatrix4x4 m_camera;
     QMatrix4x4 m_world;
