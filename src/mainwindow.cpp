@@ -145,5 +145,11 @@ void MainWindow::setupCanvas2D() {
     }
 }
 
+void MainWindow::finish(){
+    glWidget->finish();
+    delete(glWidget);
+}
+
+
 MainWindow::~MainWindow() {}
 

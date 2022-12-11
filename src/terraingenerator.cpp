@@ -10,7 +10,7 @@
 TerrainGenerator::TerrainGenerator()
 {
   // Task 8: turn off wireframe shading
-  m_wireshade = false; // STENCIL CODE
+  m_wireshade = true; // STENCIL CODE
   // m_wireshade = false; // TA SOLUTION
 
   // Define resolution of terrain generation
@@ -175,9 +175,9 @@ std::vector<float> TerrainGenerator::generateTerrain() {
 
     //TerrainGenerator::loadImageFromFile("resources/slay.png");
     //std::cout << heightInfo.size() << std::endl;
-//    heightInfo = std::vector<float>(10000, 122.f/255);
-//    heightMapWidth = 100;
-//    heightMapHeight = 100;
+    heightInfo = std::vector<float>(10000, 122.f/255);
+    heightMapWidth = 100;
+    heightMapHeight = 100;
 
     isResetTerrain = true;
     verts.reserve(m_resolution * m_resolution * 6);

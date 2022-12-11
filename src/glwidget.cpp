@@ -88,6 +88,15 @@ void GLWidget::useNewHeightMap(std::vector<RGBA> canvasData){
     update();
 }
 
+void GLWidget::finish(){
+    this->makeCurrent();
+    m_terrainVbo.destroy();
+    m_terrainVao.destroy();
+    delete m_program;
+    m_program = nullptr;
+    this->doneCurrent();
+}
+
 void GLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

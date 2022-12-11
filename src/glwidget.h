@@ -14,6 +14,7 @@ class GLWidget : public QOpenGLWidget
 public:
     GLWidget(QWidget *parent = nullptr);
 
+    void finish();
     void resetHeightMap();
     void useNewHeightMap(std::vector<RGBA> canvasData);
 
@@ -38,6 +39,7 @@ private:
     int m_xRot = 0;
     int m_yRot = 0;
     int m_zRot = 0;
+
     QOpenGLShaderProgram *m_program = nullptr;
     QOpenGLVertexArrayObject m_terrainVao;
     QOpenGLBuffer m_terrainVbo;

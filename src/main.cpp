@@ -32,9 +32,15 @@ int main(int argc, char *argv[])
     int desktopArea = QGuiApplication::primaryScreen()->size().width() *
                       QGuiApplication::primaryScreen()->size().height();
     int widgetArea = w.width() * w.height();
-    if (((float)widgetArea / (float)desktopArea) < 0.75f)
+    if (((float)widgetArea / (float)desktopArea) < 0.75f){
         w.show();
-    else
+    } else {
         w.showMaximized();
-    return a.exec();
+    }
+
+    int return_val = a.exec();
+
+    w.finish();
+
+    return return_val;
 }

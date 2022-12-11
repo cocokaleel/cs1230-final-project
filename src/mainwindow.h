@@ -11,6 +11,7 @@ class MainWindow : public QWidget
 
 public:
     void setupUI();
+    void finish();
 
     //MainWindow();
     ~MainWindow();
