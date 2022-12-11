@@ -15,6 +15,8 @@ public:
     GLWidget(QWidget *parent = nullptr);
 
     void resetHeightMap();
+    void useNewHeightMap(std::vector<RGBA> canvasData);
+
     ~GLWidget();
 
 protected:

@@ -125,38 +125,16 @@ void MainWindow::addLabel(QBoxLayout *layout, QString text) {
 
 void MainWindow::onClearButtonClick() {
     m_canvas->resize(m_canvas->parentWidget()->size().width(), m_canvas->parentWidget()->size().height());
-
-
     glWidget->resetHeightMap();
-
-
-    std::cout<<m_canvas->parentWidget()->size().width()<<std::endl;
-    std::cout<<m_canvas->parentWidget()->size().height()<<std::endl;
-
     m_canvas->clearCanvas();
 }
 
 void MainWindow::onUseMapButtonClick() {
-
-    //when use use map button is clicked, clear current vector of verts,
-    //set the new value of m_canvas in GLWidget to m_canvas from paint,
-    //set new current vector of verts to use in glWidget...................
-
-    //when clearing canvas, should the terrain also clear?
-
-
-    //In terrainGenerator, you need to interpolate so that 500x500 maps to 100x100
-
-
-
-    ////also need to figure out what the heck is going on with reading the height map!////
-    /// -not traversing the height map horizontally......///
-
-  //  glWidget->resetHeightMap(m_canvas->getCanvasData());
+    //passes down a scaled down 100 x 100 canvas image
+    glWidget->useNewHeightMap(m_canvas->getCanvasData());
 std::cout<<"reset terrain vertices..."<<std::endl;
 
 }
-
 
 void MainWindow::setupCanvas2D() {
     m_canvas = new Canvas2D();

@@ -231,7 +231,7 @@ void Canvas2D::scaleW(std::vector<RGBA> &data, int width, int height, float scal
             }
         }
 
-        Canvas2D::resize(width * scaleW, height);
+        //Canvas2D::resize(width * scaleW, height);
         data = newCanvas;
 }
 
@@ -245,12 +245,19 @@ void Canvas2D::scaleH(std::vector<RGBA> &data, int width, int height, float scal
             }
         }
 
-        Canvas2D::resize(width, height * scaleH);
+        //Canvas2D::resize(width, height * scaleH);
         data = newCanvas;
 }
 
 std::vector<RGBA> Canvas2D::getCanvasData(){
-    return m_data;
+
+    std::vector<RGBA> newData = m_data;
+    Canvas2D::scaleW(newData, 500, 500, 1.f/5);
+    Canvas2D::scaleH(newData, 500, 500, 1.f/5);
+
+
+
+    return newData;
 }
 
 

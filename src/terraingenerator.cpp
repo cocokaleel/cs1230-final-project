@@ -16,19 +16,6 @@ TerrainGenerator::TerrainGenerator()
   // Define resolution of terrain generation
   m_resolution = 100;
 
-//  // Generate random vector lookup table
-//  m_lookupSize = 1024;
-//  m_randVecLookup.reserve(m_lookupSize);
-
-//  // Initialize random number generator
-//  std::srand(1230);
-
-//  // Populate random vector lookup table
-//  for (int i = 0; i < m_lookupSize; i++)
-//  {
-//    m_randVecLookup.push_back(glm::vec2(std::rand() * 2.0 / RAND_MAX - 1.0,
-//                                        std::rand() * 2.0 / RAND_MAX - 1.0));
-//    }
 }
 
 // Destructor
@@ -47,29 +34,85 @@ void addPointToVector(glm::vec3 point, std::vector<float>& vector) {
 //helper to set vertex array
 //Pass in scaled down image
 std::vector<float>  TerrainGenerator::newHeightMap(std::vector<RGBA> newHeightMapInfo){
-    //going through triangle by triangle not pixel by pixel
-
-
-//    //clear current vertex...
-//    verts = std::vector<float>(0);
+    //clear current vertex...
+    verts.clear();
     heightInfo.clear();
-    for(RGBA& color: newHeightMapInfo){
-        heightInfo.push_back(color.r / 255.f);//check here for incorrect height
-    }
 
+    //how to access in reverse lol
+    for(RGBA& color: newHeightMapInfo){
+        heightInfo.push_back(color.r / 255.f);//check here if incorrect height
+    }
     //set new height info
-    //heightInfo = newHeightMapInfo;
+
+    std::cout<< heightInfo[5]<< std::endl;
+
     heightMapWidth = 100;
     heightMapHeight = 100;
+    isResetTerrain = false;
 
-    isResetTerrain = true;
+    for(int x = 0; x < m_resolution - 1; x++) {
+        for(int y = 0; y < m_resolution - 1; y++) {
+            int x1 = x;
+            int y1 = y;
 
-    return TerrainGenerator::clearHeightMap();
+            int x2 = x + 1;
+            int y2 = y + 1;
+
+            glm::vec3 p1 = getPosition(x1,y1);
+            glm::vec3 p2 = getPosition(x2,y1);
+            glm::vec3 p3 = getPosition(x2,y2);
+            glm::vec3 p4 = getPosition(x1,y2);
+
+            glm::vec3 n1 = getNormal(x1,y1);
+            glm::vec3 n2 = getNormal(x2,y1);
+            glm::vec3 n3 = getNormal(x2,y2);
+            glm::vec3 n4 = getNormal(x1,y2);
+
+            // tris 1
+            // x1y1z1
+            // x2y1z2
+            // x2y2z3
+            addPointToVector(p1, verts);
+            addPointToVector(n1, verts);
+            addPointToVector(getColor(n1, p1), verts);
+
+            addPointToVector(p2, verts);
+            addPointToVector(n2, verts);
+            addPointToVector(getColor(n2, p2), verts);
+
+            addPointToVector(p3, verts);
+            addPointToVector(n3, verts);
+            addPointToVector(getColor(n3, p3), verts);
+
+            // tris 2
+            // x1y1z1
+            // x2y2z3
+            // x1y2z4
+            addPointToVector(p1, verts);
+            addPointToVector(n1, verts);
+            addPointToVector(getColor(n1, p1), verts);
+
+            addPointToVector(p3, verts);
+            addPointToVector(n3, verts);
+            addPointToVector(getColor(n3, p3), verts);
+
+            addPointToVector(p4, verts);
+            addPointToVector(n4, verts);
+            addPointToVector(getColor(n4, p4), verts);
+        }
+    }
+
+    return verts;
 }
 
 std::vector<float> TerrainGenerator::clearHeightMap(){
     verts.clear();
+
+//    heightInfo = std::vector<float>(10000, 122.f/255);
+//    heightMapWidth = 100;
+//    heightMapHeight = 100;
     isResetTerrain = true;
+
     for(int x = 0; x < m_resolution - 1; x++) {
         for(int y = 0; y < m_resolution - 1; y++) {
             int x1 = x;
@@ -127,12 +170,17 @@ std::vector<float> TerrainGenerator::clearHeightMap(){
 
 
 
-
 // Generates the geometry of the output triangle mesh
 std::vector<float> TerrainGenerator::generateTerrain() {
-    TerrainGenerator::loadImageFromFile("resources/cp.png");
-    verts.reserve(m_resolution * m_resolution * 6);
 
+    //TerrainGenerator::loadImageFromFile("resources/slay.png");
+    //std::cout << heightInfo.size() << std::endl;
+//    heightInfo = std::vector<float>(10000, 122.f/255);
+//    heightMapWidth = 100;
+//    heightMapHeight = 100;
+
+    isResetTerrain = true;
+    verts.reserve(m_resolution * m_resolution * 6);
     for(int x = 0; x < m_resolution - 1; x++) {
         for(int y = 0; y < m_resolution - 1; y++) {
 
@@ -202,7 +250,7 @@ glm::vec3 TerrainGenerator::getPosition(int row, int col) {
     if(!isResetTerrain){
         z = getHeight(row, col);
     } else {
-        z = 0.f;
+        z = (122.f/255)/10;
     }
 
     return glm::vec3(x,y,z);
@@ -223,6 +271,7 @@ void TerrainGenerator::loadImageFromFile(const std::string &file) {
     if (!myImage.load(inputFile)) {
         std::cout<<"Failed to load in image"<<std::endl;
     }
+
     myImage = myImage.convertToFormat(QImage::Format_RGBX8888);
     int texture_W = myImage.width();
     int texture_H = myImage.height();
@@ -246,15 +295,6 @@ void TerrainGenerator::loadImageFromFile(const std::string &file) {
     heightMapWidth = texture_W;
     heightMapHeight = texture_H;
 }
-
-
-//// Helper for computePerlin() and, possibly, getColor()
-//float interpolate(float A, float B, float alpha) {
-//    // Task 4: implement your easing/interpolation function below
-//    float easeValue = 3 * pow(alpha, 2) - 2 * pow(alpha, 3);
-
-//    return A + easeValue * (B - A);
-//}
 
 // Takes a normalized (x, y) position, in range [0,1)
 // Returns a height value, z, by sampling a noise function

@@ -80,6 +80,13 @@ void GLWidget::resetHeightMap(){
     update();
 };
 
+void GLWidget::useNewHeightMap(std::vector<RGBA> canvasData){
+    verts = m_terrain.newHeightMap(canvasData);
+    m_terrainVbo.bind();
+    m_terrainVbo.allocate(verts.data(),verts.size()*sizeof(GLfloat));
+    m_terrainVbo.release();
+    update();
+}
 
 void GLWidget::paintGL()
 {
