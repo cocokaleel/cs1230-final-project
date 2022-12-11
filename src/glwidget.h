@@ -7,6 +7,11 @@
 #include "terraingenerator.h"
 #include <QMatrix4x4>
 
+#include <QElapsedTimer>
+#include <QOpenGLWidget>
+#include <QTime>
+#include <QTimer>
+
 QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram)
 
 class GLWidget : public QOpenGLWidget
@@ -18,6 +23,12 @@ public:
     void useNewHeightMap(std::vector<RGBA> canvasData);
 
     ~GLWidget();
+
+    // Tick Related Variables
+    int m_timer;                                        // Stores timer which attempts to run ~60 times per second
+    QElapsedTimer m_elapsedTimer;                       // Stores timer which keeps track of actual time between frames
+
+    void tick(QTimerEvent* event);                      // Called once per tick of m_timer
 
 protected:
     void initializeGL() override;
@@ -31,6 +42,7 @@ private:
     void rebuildMatrices();
     //void resetVBO(QOpenGLBuffer& vbo, std::vector<GLfloat>vertexData);
 
+    void timerEvent(QTimerEvent *event) override;
 
     std::vector<GLfloat> verts;
     bool isClearing = false;

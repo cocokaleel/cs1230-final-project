@@ -39,7 +39,8 @@ std::vector<float>  TerrainGenerator::newHeightMap(std::vector<RGBA> newHeightMa
     heightInfo.clear();
 
     //how to access in reverse lol
-    for(RGBA& color: newHeightMapInfo){
+    for(RGBA &color: newHeightMapInfo){
+//        std::cout<< color.r << std::endl;
         heightInfo.push_back(color.r / 255.f);//check here if incorrect height
     }
     //set new height info
@@ -173,13 +174,13 @@ std::vector<float> TerrainGenerator::clearHeightMap(){
 // Generates the geometry of the output triangle mesh
 std::vector<float> TerrainGenerator::generateTerrain() {
 
-    //TerrainGenerator::loadImageFromFile("resources/slay.png");
+    TerrainGenerator::loadImageFromFile("resources/slay.png");
     //std::cout << heightInfo.size() << std::endl;
 //    heightInfo = std::vector<float>(10000, 122.f/255);
 //    heightMapWidth = 100;
 //    heightMapHeight = 100;
 
-    isResetTerrain = true;
+//    isResetTerrain = true;
     verts.reserve(m_resolution * m_resolution * 6);
     for(int x = 0; x < m_resolution - 1; x++) {
         for(int y = 0; y < m_resolution - 1; y++) {

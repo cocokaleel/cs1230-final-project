@@ -17,6 +17,9 @@ GLWidget::~GLWidget() {}
 
 void GLWidget::initializeGL()
 {
+//    m_timer = startTimer(1000/60);
+//    m_elapsedTimer.start();
+
     // GLEW is a library which provides an implementation for the OpenGL API
     // Here, we are setting it up
     glewExperimental = GL_TRUE;

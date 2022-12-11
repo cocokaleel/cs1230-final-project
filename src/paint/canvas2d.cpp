@@ -255,8 +255,6 @@ std::vector<RGBA> Canvas2D::getCanvasData(){
     Canvas2D::scaleW(newData, 500, 500, 1.f/5);
     Canvas2D::scaleH(newData, 500, 500, 1.f/5);
 
-
-
     return newData;
 }
 

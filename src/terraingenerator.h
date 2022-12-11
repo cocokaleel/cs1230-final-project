@@ -5,8 +5,6 @@
 #include "glm/glm.hpp"
 #include "src/RGBA.h"
 
-
-
 class TerrainGenerator
 {
 
@@ -17,6 +15,8 @@ class TerrainGenerator
 
 
 public:
+
+
     bool m_wireshade;
 
     TerrainGenerator();
@@ -29,6 +29,7 @@ public:
     std::vector<float> clearHeightMap();
 
 private:
+
 
     // Member variables for terrain generation. You will not need to use these directly.
     std::vector<glm::vec2> m_randVecLookup;
@@ -67,4 +68,6 @@ private:
 
 
     void loadImageFromFile(const std::string &file);
+
+
 };
