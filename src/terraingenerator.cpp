@@ -10,7 +10,7 @@
 TerrainGenerator::TerrainGenerator()
 {
   // Task 8: turn off wireframe shading
-  m_wireshade = true; // STENCIL CODE
+  m_wireshade = false; // STENCIL CODE
   // m_wireshade = false; // TA SOLUTION
 
   // Define resolution of terrain generation
