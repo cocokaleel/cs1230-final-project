@@ -7,6 +7,11 @@
 #include "terraingenerator.h"
 #include <QMatrix4x4>
 
+
+#include <QElapsedTimer>
+#include <QTime>
+#include <QTimer>
+
 QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram)
 
 class GLWidget : public QOpenGLWidget
@@ -20,6 +25,12 @@ public:
 
     ~GLWidget();
 
+
+    int m_timer;
+    QElapsedTimer m_elapsedTimer;
+
+    void tick(QTimerEvent* event);
+
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -32,6 +43,7 @@ private:
     void rebuildMatrices();
     //void resetVBO(QOpenGLBuffer& vbo, std::vector<GLfloat>vertexData);
 
+    void useNewImage(const std::string &file);
 
     std::vector<GLfloat> verts;
     bool isClearing = false;

@@ -25,6 +25,7 @@ public:
     std::vector<float> generateTerrain();
 
     std::vector<float> newHeightMap(std::vector<RGBA> newHeightMapInfo);
+    std::vector<float> uploadNewImage(const std::string &file);
 
     std::vector<float> clearHeightMap();
 

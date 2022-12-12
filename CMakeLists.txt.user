@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 8.0.1, 2022-12-12T15:41:41. -->
+<!-- Written by QtCreator 8.0.1, 2022-12-12T17:08:57. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -453,6 +453,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory">C:/Users/Serena/Desktop/CSCI 1230/projects/cs1230-final-project</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">C:/Users/Serena/Desktop/CSCI 1230/projects/build-cs1230-final-project-Desktop_Qt_6_2_4_MinGW_64_bit-Release</value>
    </valuemap>
    <value type="qlonglong" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

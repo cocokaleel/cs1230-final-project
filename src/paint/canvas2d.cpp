@@ -259,7 +259,6 @@ std::vector<RGBA> Canvas2D::getCanvasData(){
     Canvas2D::scaleH(newData, 100, m_height, 100.f/m_height);
 
     std::vector<RGBA> mirrorData;
-
     for(int y = 100; y > 0; y--){
         for(int x = 100; x > 0; x--){
             mirrorData.push_back(newData[(100 * (100 - y) + x-1)]);

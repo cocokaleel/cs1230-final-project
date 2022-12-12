@@ -17,6 +17,10 @@ GLWidget::~GLWidget() {}
 
 void GLWidget::initializeGL()
 {
+    m_timer = startTimer(1000/60);
+    m_elapsedTimer.start();
+
+
     // GLEW is a library which provides an implementation for the OpenGL API
     // Here, we are setting it up
     glewExperimental = GL_TRUE;
@@ -77,6 +81,10 @@ void GLWidget::resetHeightMap(){
     m_terrainVbo.bind();
     m_terrainVbo.allocate(verts.data(),verts.size()*sizeof(GLfloat));
     m_terrainVbo.release();
+
+    m_elapsedTimer.restart();
+
+
     update();
 };
 
@@ -85,7 +93,24 @@ void GLWidget::useNewHeightMap(std::vector<RGBA> canvasData){
     m_terrainVbo.bind();
     m_terrainVbo.allocate(verts.data(),verts.size()*sizeof(GLfloat));
     m_terrainVbo.release();
+
+
+    m_elapsedTimer.restart();
+
     update();
+}
+
+void GLWidget::useNewImage(const std::string &file){
+    //verts.clear();
+    verts = m_terrain.uploadNewImage(file);
+
+    std::cout<<verts.size()<<std::endl;
+    m_terrainVbo.bind();
+    m_terrainVbo.allocate(verts.data(),verts.size()*sizeof(GLfloat));
+    m_terrainVbo.release();
+
+    update();
+
 }
 
 void GLWidget::finish(){
@@ -152,7 +177,29 @@ void GLWidget::rebuildMatrices() {
 
     eye = eye * m_zoom;
 
-    m_camera.lookAt(eye,QVector3D(0,0,0),QVector3D(0,0,1));
+
+    float camX = sin(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
+    float camZ = cos(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
+
+
+    if(8.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 8.05f){
+        std::cout<<"it's time"<<std::endl;
+        //GLWidget::resetHeightMap();
+        GLWidget::useNewImage("resources/zack.png");
+
+    }
+
+    if(16.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 16.05f){
+        std::cout<<"it's time"<<std::endl;
+        //GLWidget::resetHeightMap();
+        GLWidget::useNewImage("resources/helen (1).jpg");
+
+    }
+
+    m_camera.lookAt(QVector3D(camX, 0.f, camZ), QVector3D(0,0,0), QVector3D(0,-1,0));
+
+
+    //m_camera.lookAt(eye,QVector3D(0,0,0),QVector3D(0,0,1));
 
     m_proj.setToIdentity();
     m_proj.perspective(45.0f, 1.0 * width() / height(), 0.01f, 100.0f);

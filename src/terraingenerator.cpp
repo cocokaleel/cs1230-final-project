@@ -186,7 +186,48 @@ void TerrainGenerator::loadImageFromFile(const std::string &file) {
     heightInfo = texture_data;
     heightMapWidth = texture_W;
     heightMapHeight = texture_H;
+
+
 }
+
+
+std::vector<float> TerrainGenerator::uploadNewImage(const std::string &file) {
+    verts.clear();
+    std::vector<float> texture_data;
+    QString inputFile = QString::fromStdString(file);
+    QImage myImage;
+    if (!myImage.load(inputFile)) {
+        std::cout<<"Failed to load in image"<<std::endl;
+    }
+
+    myImage = myImage.convertToFormat(QImage::Format_RGBX8888);
+    int texture_W = myImage.width();
+    int texture_H = myImage.height();
+
+    QByteArray arr = QByteArray::fromRawData((const char*) myImage.bits(), myImage.sizeInBytes());
+
+    texture_data.clear();
+    texture_data.reserve(texture_W * texture_H);
+
+    for (int i = 0; i < arr.size() / 4.f; i++){
+        texture_data.push_back((std::uint8_t) arr[4*i] / 255.f); //get RGBA value between 0.0
+    }
+    std::cout << "Loaded heightmap of size " << texture_H << " x " << texture_W << std::endl;
+
+    heightInfo = texture_data;
+    heightMapWidth = texture_W;
+    heightMapHeight = texture_H;
+
+    TerrainGenerator::addToVerts();
+
+    return verts;
+
+
+
+}
+
+
+
 
 
 // Takes a normalized (x, y) position, in range [0,1)
