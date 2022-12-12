@@ -127,7 +127,7 @@ std::vector<float> TerrainGenerator::clearHeightMap(){
 // Generates the geometry of the output triangle mesh
 std::vector<float> TerrainGenerator::generateTerrain() {
 
-//    //TerrainGenerator::loadImageFromFile("resources/slay.png");
+    //TerrainGenerator::loadImageFromFile("resources/slay.png");
 //    //std::cout << heightInfo.size() << std::endl;
 //    heightInfo = std::vector<float>(10000, 122.f/255);
 //    heightMapWidth = 100;
@@ -154,7 +154,7 @@ glm::vec3 TerrainGenerator::getPosition(int row, int col) {
     if(!isResetTerrain){
         z = getHeight(row, col);
     } else {
-        z = (122.f/255)/10;
+        z = (122.f/255)/4;
     }
 
     return glm::vec3(x,y,z);
@@ -186,12 +186,7 @@ void TerrainGenerator::loadImageFromFile(const std::string &file) {
     texture_data.reserve(texture_W * texture_H);
 
     for (int i = 0; i < arr.size() / 4.f; i++){
-        //if(isNotClear){
-            texture_data.push_back((std::uint8_t) arr[4*i] / 255.f); //get RGBA value between 0.0
-        //}else{
-            //texture_data.push_back(0.0); //get RGBA value between 0.0
-
-        //}
+        texture_data.push_back((std::uint8_t) arr[4*i] / 255.f); //get RGBA value between 0.0
     }
     std::cout << "Loaded heightmap of size " << texture_H << " x " << texture_W << std::endl;
 
@@ -200,11 +195,12 @@ void TerrainGenerator::loadImageFromFile(const std::string &file) {
     heightMapHeight = texture_H;
 }
 
+
 // Takes a normalized (x, y) position, in range [0,1)
 // Returns a height value, z, by sampling a noise function
 float TerrainGenerator::getHeight(float x, float y) {
 
-   float z = heightInfo[(heightMapWidth * y) + x]/10;
+   float z = heightInfo[(heightMapWidth * y) + x]/4;
     return z ;
 }
 
@@ -255,7 +251,7 @@ glm::vec3 TerrainGenerator::getColor(glm::vec3 normal, glm::vec3 position) {
 //    }
 
     if(glm::dot(normal, position) < .0001 && position.z > .1){
-        return glm::vec3(1,1,1);
+        return glm::vec3(.5,.2,1);
     }
     else {
         return glm::vec3(.5,.5,.5);

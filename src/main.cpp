@@ -24,11 +24,6 @@ int main(int argc, char *argv[])
     //size to have a 500x500 canvas
     w.setFixedSize(1196, 524);
 
-
-
-
-
-
     int desktopArea = QGuiApplication::primaryScreen()->size().width() *
                       QGuiApplication::primaryScreen()->size().height();
     int widgetArea = w.width() * w.height();

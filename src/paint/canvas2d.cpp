@@ -255,9 +255,10 @@ void Canvas2D::scaleH(std::vector<RGBA> &data, int width, int height, float scal
 
 std::vector<RGBA> Canvas2D::getCanvasData(){
     std::vector<RGBA> newData = m_data;
-    Canvas2D::scaleW(newData, 500, 500, 1.f/5);
-    Canvas2D::scaleH(newData, 100, 500, 1.f/5);
+    Canvas2D::scaleW(newData, m_width, m_height, 100.f/m_width);
+    Canvas2D::scaleH(newData, 100, m_height, 100.f/m_height);
 
+    //need to mirror data
 //    std::vector<RGBA> mirrorData;
 //    for (int y = 0; y < 100; y++){
 //        for (int x = 0; x < 100; x++){

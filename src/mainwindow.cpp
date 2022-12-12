@@ -10,6 +10,7 @@
 #include <QFileDialog>
 #include <QRadioButton>
 #include <QSpinBox>
+#include <QSlider>
 
 #include <QLabel>
 #include <QGroupBox>
@@ -39,22 +40,84 @@ void MainWindow::setupUI()
     addRadioButton(brushLayout, "Quadratic", settings.brushType == BRUSH_QUADRATIC, [this]{ setBrushType(BRUSH_QUADRATIC); });
     addRadioButton(brushLayout, "Smudge", settings.brushType == BRUSH_SMUDGE, [this]{ setBrushType(BRUSH_SMUDGE); });
 
-    // brush parameters
-    addSpinBox(brushLayout, "shade", 0, 255, 1, settings.brushColor.r, [this](int value){ setUIntVal(settings.brushColor.r,
-                                                                                                     settings.brushColor.g,
-                                                                                                     settings.brushColor.b,
-                                                                                                     value);});
+    //setting up shade slider
+    shadeSlider = new QSlider(Qt::Orientation::Horizontal);
+    shadeSlider->setTickInterval(1);
+    shadeSlider->setMinimum(0);
+    shadeSlider->setMaximum(255);
+    shadeSlider->setValue(settings.brushColor.r);
 
-    addSpinBox(brushLayout, "alpha", 0, 255, 1, settings.brushColor.a, [this](int value){ setUIntVal(settings.brushColor.a,
-                                                                                                     settings.brushColor.a,
-                                                                                                     settings.brushColor.a,
-                                                                                                     value); });
-    addSpinBox(brushLayout, "radius", 0, 100, 1, settings.brushRadius, [this](int value){ setIntVal(settings.brushRadius, value); });
+    shadeBox = new QSpinBox();
+    shadeBox->setSingleStep(1);
+    shadeBox->setMinimum(0);
+    shadeBox->setMaximum(255);
+    shadeBox->setValue(settings.brushColor.r);
+
+    connect(shadeSlider, &QSlider::valueChanged, this, &MainWindow::onValChangeShadeSlider);
+
+    connect(shadeBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+            this,  &MainWindow::onValChangeShadeBox);
+
+    QHBoxLayout *subLayout = new QHBoxLayout();
+    addLabel(subLayout, "Shade");
+    subLayout->addWidget(shadeBox);
+    subLayout->addWidget(shadeSlider);
+    brushLayout->addLayout(subLayout);
+
+    //setting up alpha slider
+    alphaSlider = new QSlider(Qt::Orientation::Horizontal);
+    alphaSlider->setTickInterval(1);
+    alphaSlider->setMinimum(0);
+    alphaSlider->setMaximum(255);
+    alphaSlider->setValue(settings.brushColor.a);
+
+    alphaBox = new QSpinBox();
+    alphaBox->setSingleStep(1);
+    alphaBox->setMinimum(0);
+    alphaBox->setMaximum(255);
+    alphaBox->setValue(settings.brushColor.a);
+
+    connect(alphaSlider, &QSlider::valueChanged, this, &MainWindow::onValChangeAlphaSlider);
+
+    connect(alphaBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+            this,  &MainWindow::onValChangeAlphaBox);
+
+    subLayout = new QHBoxLayout();
+    addLabel(subLayout, "Alpha");
+    subLayout->addWidget(alphaBox);
+    subLayout->addWidget(alphaSlider);
+    brushLayout->addLayout(subLayout);
+
+    //setting up radius slider
+    radiusSlider = new QSlider(Qt::Orientation::Horizontal);
+    radiusSlider->setTickInterval(1);
+    radiusSlider->setMinimum(0);
+    radiusSlider->setMaximum(100);
+    radiusSlider->setValue(settings.brushRadius);
+
+    radiusBox = new QSpinBox();
+    radiusBox->setSingleStep(1);
+    radiusBox->setMinimum(0);
+    radiusBox->setMaximum(100);
+    radiusBox->setValue(settings.brushRadius);
+
+    connect(radiusSlider, &QSlider::valueChanged, this, &MainWindow::onValChangeRadiusSlider);
+
+    connect(radiusBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+            this,  &MainWindow::onValChangeRadiusBox);
+
+    subLayout = new QHBoxLayout();
+    addLabel(subLayout, "Radius");
+    subLayout->addWidget(radiusBox);
+    subLayout->addWidget(radiusSlider);
+    brushLayout->addLayout(subLayout);
 
     // clearing canvas
     addPushButton(brushLayout, "Clear canvas", &MainWindow::onClearButtonClick);
     //using new heightmap
     addPushButton(brushLayout, "Use New Height Map", &MainWindow::onUseMapButtonClick);
+
+    addPushButton(brushLayout, "Load Image", &MainWindow::onUploadButtonClick);
 
     brushGroup -> setFixedSize(165, 524);
 
@@ -91,18 +154,57 @@ void MainWindow::addSpinBox(QBoxLayout *layout, QString text, int min, int max, 
             this, function);
 }
 
+void MainWindow::onValChangeShadeSlider(int newValue){
+    shadeBox->setValue(newValue);
 
-void MainWindow::setUIntVal(std::uint8_t &r,std::uint8_t &b,std::uint8_t &g, int newValue) {
-    r = newValue;
-    b = newValue;
-    g = newValue;
+    settings.brushColor.r = shadeBox->value();
+    settings.brushColor.g = shadeBox->value();
+    settings.brushColor.b = shadeBox->value();
+
     m_canvas->settingsChanged();
 }
 
-void MainWindow::setIntVal(int &setValue, int newValue) {
-    setValue = newValue;
+void MainWindow::onValChangeShadeBox(int newValue){
+    shadeSlider->setValue(newValue);
+    settings.brushColor.r = shadeBox->value();
+    settings.brushColor.g = shadeBox->value();
+    settings.brushColor.b = shadeBox->value();
+
+    m_canvas->settingsChanged();
+
+}
+
+void MainWindow::onValChangeAlphaSlider(int newValue){
+    alphaBox->setValue(newValue);
+
+    settings.brushColor.a = alphaBox->value();
+
     m_canvas->settingsChanged();
 }
+
+void MainWindow::onValChangeAlphaBox(int newValue){
+    alphaSlider->setValue(newValue);
+    settings.brushColor.a = alphaBox->value();
+    m_canvas->settingsChanged();
+
+}
+
+
+void MainWindow::onValChangeRadiusSlider(int newValue){
+    radiusBox->setValue(newValue);
+
+    settings.brushRadius = radiusBox->value();
+
+    m_canvas->settingsChanged();
+}
+void MainWindow::onValChangeRadiusBox(int newValue){
+    radiusSlider->setValue(newValue);
+    settings.brushRadius = radiusBox->value();
+
+    m_canvas->settingsChanged();
+
+}
+
 
 void MainWindow::addPushButton(QBoxLayout *layout, QString text, auto function) {
     QPushButton *button = new QPushButton(text);
@@ -133,8 +235,6 @@ void MainWindow::onClearButtonClick() {
 void MainWindow::onUseMapButtonClick() {
     //passes down a scaled down 100 x 100 canvas image
     glWidget->useNewHeightMap(m_canvas->getCanvasData());
-    std::cout<<"reset terrain vertices..."<<std::endl;
-
 }
 
 void MainWindow::setupCanvas2D() {
@@ -145,6 +245,20 @@ void MainWindow::setupCanvas2D() {
         m_canvas->loadImageFromFile(settings.imagePath);
     }
 }
+
+
+void MainWindow::onUploadButtonClick() {
+    // Get new image path selected by user
+    QString file = QFileDialog::getOpenFileName(this, tr("Open Image"), QDir::homePath(), tr("Image Files (*.png *.jpg *.jpeg)"));
+    if (file.isEmpty()) { return; }
+    settings.imagePath = file;
+
+    // Display new image
+    m_canvas->loadImageFromFile(settings.imagePath);
+
+    m_canvas->settingsChanged();
+}
+
 
 void MainWindow::finish(){
     glWidget->finish();
