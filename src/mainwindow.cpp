@@ -114,10 +114,12 @@ void MainWindow::setupUI()
 
     // clearing canvas
     addPushButton(brushLayout, "Clear canvas", &MainWindow::onClearButtonClick);
+
+    //using load image2
+    addPushButton(brushLayout, "Load Image", &MainWindow::onUploadButtonClick);
+
     //using new heightmap
     addPushButton(brushLayout, "Use New Height Map", &MainWindow::onUseMapButtonClick);
-
-    addPushButton(brushLayout, "Load Image", &MainWindow::onUploadButtonClick);
 
     brushGroup -> setFixedSize(165, 524);
 

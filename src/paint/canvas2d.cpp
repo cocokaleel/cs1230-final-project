@@ -11,7 +11,7 @@
  * @brief Initializes new 500x500 canvas
  */
 void Canvas2D::init(){
-    m_width = 500;
+    m_width = 499;
     m_height = 500;
     clearCanvas();
 }
@@ -258,19 +258,16 @@ std::vector<RGBA> Canvas2D::getCanvasData(){
     Canvas2D::scaleW(newData, m_width, m_height, 100.f/m_width);
     Canvas2D::scaleH(newData, 100, m_height, 100.f/m_height);
 
-    //need to mirror data
-//    std::vector<RGBA> mirrorData;
-//    for (int y = 0; y < 100; y++){
-//        for (int x = 0; x < 100; x++){
+    std::vector<RGBA> mirrorData;
 
-//            //(heightMapWidth * y) + x
-//            mirrorData[(100 * y) + x] = newData[100 - (100 * y) - 1 + x];
+    for(int y = 100; y > 0; y--){
+        for(int x = 100; x > 0; x--){
+            mirrorData.push_back(newData[(100 * (100 - y) + x-1)]);
+        }
 
-//        }
-//    }
+    }
 
-
-    return newData;
+    return mirrorData;
 }
 
 

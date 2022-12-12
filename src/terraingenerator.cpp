@@ -10,7 +10,7 @@
 TerrainGenerator::TerrainGenerator()
 {
   // Task 8: turn off wireframe shading
-  m_wireshade = false; // STENCIL CODE
+  m_wireshade = true; // STENCIL CODE
   // m_wireshade = false; // TA SOLUTION
 
   // Define resolution of terrain generation
@@ -126,13 +126,6 @@ std::vector<float> TerrainGenerator::clearHeightMap(){
 
 // Generates the geometry of the output triangle mesh
 std::vector<float> TerrainGenerator::generateTerrain() {
-
-    //TerrainGenerator::loadImageFromFile("resources/slay.png");
-//    //std::cout << heightInfo.size() << std::endl;
-//    heightInfo = std::vector<float>(10000, 122.f/255);
-//    heightMapWidth = 100;
-//    heightMapHeight = 100;
-
     isResetTerrain = true;
 
     verts.reserve(m_resolution * m_resolution * 6);
@@ -209,25 +202,25 @@ glm::vec3 TerrainGenerator::getNormal(int row, int col) {
     // Task 9: Compute the average normal for the given input indices
     //8 neighbors
     glm::vec3 normal = glm::vec3(0, 0, 0);
-    std::vector<std::vector<int>> neighborOffsets = { // Counter-clockwise around the vertex
-     {-1, -1},
-     { 0, -1},
-     { 1, -1},
-     { 1,  0},
-     { 1,  1},
-     { 0,  1},
-     {-1,  1},
-     {-1,  0}
-    };
+    std::vector<std::vector<int>> neighborOffsets = { //around the vertex
+                                                      {-1, -1},
+                                                      { 0, -1},
+                                                      { 1, -1},
+                                                      { 1,  0},
+                                                      { 1,  1},
+                                                      { 0,  1},
+                                                      {-1,  1},
+                                                      {-1,  0}
+                                                    };
     glm::vec3 V = getPosition(row,col);
     for (int i = 0; i < 8; ++i) {
-     int n1RowOffset = neighborOffsets[i][0];
-     int n1ColOffset = neighborOffsets[i][1];
-     int n2RowOffset = neighborOffsets[(i + 1) % 8][0];
-     int n2ColOffset = neighborOffsets[(i + 1) % 8][1];
-     glm::vec3 n1 = getPosition(row + n1RowOffset, col + n1ColOffset);
-     glm::vec3 n2 = getPosition(row + n2RowOffset, col + n2ColOffset);
-     normal = normal + glm::cross(n1 - V, n2 - V);
+        int n1RowOffset = neighborOffsets[i][0];
+        int n1ColOffset = neighborOffsets[i][1];
+        int n2RowOffset = neighborOffsets[(i + 1) % 8][0];
+        int n2ColOffset = neighborOffsets[(i + 1) % 8][1];
+        glm::vec3 n1 = getPosition(row + n1RowOffset, col + n1ColOffset);
+        glm::vec3 n2 = getPosition(row + n2RowOffset, col + n2ColOffset);
+        normal = normal + glm::cross(n1 - V, n2 - V);
     }
     return glm::normalize(normal);
 }
@@ -250,7 +243,10 @@ glm::vec3 TerrainGenerator::getColor(glm::vec3 normal, glm::vec3 position) {
 //        return glm::vec3(.5,.5,.5);
 //    }
 
-    if(glm::dot(normal, position) < .0001 && position.z > .1){
+    if (glm::dot(normal, position) < .0001){
+         return glm::vec3(.5,.2,0.f);
+    }
+    else if(position.z > .2f){
         return glm::vec3(.5,.2,1);
     }
     else {
