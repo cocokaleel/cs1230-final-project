@@ -5,11 +5,12 @@
 #include <iostream>
 #include "filters.h"
 #include "settings.h"
+#include "src/glwidget.h"
 
 /**
  * @brief Initializes new 500x500 canvas
  */
-void Canvas2D::init() {
+void Canvas2D::init(){
     m_width = 500;
     m_height = 500;
     clearCanvas();
@@ -133,6 +134,7 @@ void Canvas2D::mouseDown(int x, int y) {
             }
         }
     }
+
     maskToCanvas(x,y);
     displayImage();
 }
@@ -146,6 +148,8 @@ void Canvas2D::mouseDragged(int x, int y) {
 
 void Canvas2D::mouseUp(int x, int y) {
     //i do not use mouseUp for brush
+    //glWidg->resetHeightMap();
+
 }
 
 //turns x,y coordinates into an index for the 1D canvas array
@@ -250,15 +254,24 @@ void Canvas2D::scaleH(std::vector<RGBA> &data, int width, int height, float scal
 }
 
 std::vector<RGBA> Canvas2D::getCanvasData(){
-
     std::vector<RGBA> newData = m_data;
     Canvas2D::scaleW(newData, 500, 500, 1.f/5);
-    Canvas2D::scaleH(newData, 500, 500, 1.f/5);
+    Canvas2D::scaleH(newData, 100, 500, 1.f/5);
 
+//    std::vector<RGBA> mirrorData;
+//    for (int y = 0; y < 100; y++){
+//        for (int x = 0; x < 100; x++){
+
+//            //(heightMapWidth * y) + x
+//            mirrorData[(100 * y) + x] = newData[100 - (100 * y) - 1 + x];
+
+//        }
+//    }
 
 
     return newData;
 }
+
 
 
 

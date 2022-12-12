@@ -2,6 +2,7 @@
 #define CANVAS2D_H
 
 #include "src/RGBA.h"
+#include "src/glwidget.h"
 #include <QLabel>
 #include <QMouseEvent>
 #include <array>

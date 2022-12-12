@@ -36,5 +36,6 @@ private:
 
     void addRadioButton(QBoxLayout *layout, QString text, bool value, auto function);
     void addSpinBox(QBoxLayout *layout, QString text, int min, int max, int step, int val, auto function);
+    //void addSliderQBoxLayout(QBoxLayout *layout, QString text, int min, int max, int step, int val, auto function);
 
 };

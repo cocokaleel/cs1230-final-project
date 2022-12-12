@@ -91,6 +91,7 @@ void MainWindow::addSpinBox(QBoxLayout *layout, QString text, int min, int max, 
             this, function);
 }
 
+
 void MainWindow::setUIntVal(std::uint8_t &r,std::uint8_t &b,std::uint8_t &g, int newValue) {
     r = newValue;
     b = newValue;
@@ -132,7 +133,7 @@ void MainWindow::onClearButtonClick() {
 void MainWindow::onUseMapButtonClick() {
     //passes down a scaled down 100 x 100 canvas image
     glWidget->useNewHeightMap(m_canvas->getCanvasData());
-std::cout<<"reset terrain vertices..."<<std::endl;
+    std::cout<<"reset terrain vertices..."<<std::endl;
 
 }
 

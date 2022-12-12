@@ -67,4 +67,7 @@ private:
 
 
     void loadImageFromFile(const std::string &file);
+    void addToVerts();
+
+
 };

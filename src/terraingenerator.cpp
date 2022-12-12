@@ -10,7 +10,7 @@
 TerrainGenerator::TerrainGenerator()
 {
   // Task 8: turn off wireframe shading
-  m_wireshade = true; // STENCIL CODE
+  m_wireshade = false; // STENCIL CODE
   // m_wireshade = false; // TA SOLUTION
 
   // Define resolution of terrain generation
@@ -29,6 +29,64 @@ void addPointToVector(glm::vec3 point, std::vector<float>& vector) {
     vector.push_back(point.x);
     vector.push_back(point.y);
     vector.push_back(point.z);
+}
+
+//add points and normals and colors to verts
+void TerrainGenerator::addToVerts(){
+    for(int x = 0; x < m_resolution - 1; x++) {
+        for(int y = 0; y < m_resolution - 1; y++) {
+            int x1 = x;
+            int y1 = y;
+
+            int x2 = x + 1;
+            int y2 = y + 1;
+
+            glm::vec3 p1 = getPosition(x1,y1);
+            glm::vec3 p2 = getPosition(x2,y1);
+            glm::vec3 p3 = getPosition(x2,y2);
+            glm::vec3 p4 = getPosition(x1,y2);
+
+            glm::vec3 n1 = getNormal(x1,y1);
+            glm::vec3 n2 = getNormal(x2,y1);
+            glm::vec3 n3 = getNormal(x2,y2);
+            glm::vec3 n4 = getNormal(x1,y2);
+
+            // tris 1
+            // x1y1z1
+            // x2y1z2
+            // x2y2z3
+            addPointToVector(p1, verts);
+            addPointToVector(n1, verts);
+            addPointToVector(getColor(n1, p1), verts);
+
+            addPointToVector(p2, verts);
+            addPointToVector(n2, verts);
+            addPointToVector(getColor(n2, p2), verts);
+
+            addPointToVector(p3, verts);
+            addPointToVector(n3, verts);
+            addPointToVector(getColor(n3, p3), verts);
+
+            // tris 2
+            // x1y1z1
+            // x2y2z3
+            // x1y2z4
+            addPointToVector(p1, verts);
+            addPointToVector(n1, verts);
+            addPointToVector(getColor(n1, p1), verts);
+
+            addPointToVector(p3, verts);
+            addPointToVector(n3, verts);
+            addPointToVector(getColor(n3, p3), verts);
+
+            addPointToVector(p4, verts);
+            addPointToVector(n4, verts);
+            addPointToVector(getColor(n4, p4), verts);
+        }
+    }
+
+
+
 }
 
 //helper to set vertex array
@@ -50,120 +108,16 @@ std::vector<float>  TerrainGenerator::newHeightMap(std::vector<RGBA> newHeightMa
     heightMapHeight = 100;
     isResetTerrain = false;
 
-    for(int x = 0; x < m_resolution - 1; x++) {
-        for(int y = 0; y < m_resolution - 1; y++) {
-            int x1 = x;
-            int y1 = y;
-
-            int x2 = x + 1;
-            int y2 = y + 1;
-
-            glm::vec3 p1 = getPosition(x1,y1);
-            glm::vec3 p2 = getPosition(x2,y1);
-            glm::vec3 p3 = getPosition(x2,y2);
-            glm::vec3 p4 = getPosition(x1,y2);
-
-            glm::vec3 n1 = getNormal(x1,y1);
-            glm::vec3 n2 = getNormal(x2,y1);
-            glm::vec3 n3 = getNormal(x2,y2);
-            glm::vec3 n4 = getNormal(x1,y2);
-
-            // tris 1
-            // x1y1z1
-            // x2y1z2
-            // x2y2z3
-            addPointToVector(p1, verts);
-            addPointToVector(n1, verts);
-            addPointToVector(getColor(n1, p1), verts);
-
-            addPointToVector(p2, verts);
-            addPointToVector(n2, verts);
-            addPointToVector(getColor(n2, p2), verts);
-
-            addPointToVector(p3, verts);
-            addPointToVector(n3, verts);
-            addPointToVector(getColor(n3, p3), verts);
-
-            // tris 2
-            // x1y1z1
-            // x2y2z3
-            // x1y2z4
-            addPointToVector(p1, verts);
-            addPointToVector(n1, verts);
-            addPointToVector(getColor(n1, p1), verts);
-
-            addPointToVector(p3, verts);
-            addPointToVector(n3, verts);
-            addPointToVector(getColor(n3, p3), verts);
-
-            addPointToVector(p4, verts);
-            addPointToVector(n4, verts);
-            addPointToVector(getColor(n4, p4), verts);
-        }
-    }
+    TerrainGenerator::addToVerts();
 
     return verts;
 }
 
 std::vector<float> TerrainGenerator::clearHeightMap(){
     verts.clear();
-
-//    heightInfo = std::vector<float>(10000, 122.f/255);
-//    heightMapWidth = 100;
-//    heightMapHeight = 100;
     isResetTerrain = true;
 
-    for(int x = 0; x < m_resolution - 1; x++) {
-        for(int y = 0; y < m_resolution - 1; y++) {
-            int x1 = x;
-            int y1 = y;
-
-            int x2 = x + 1;
-            int y2 = y + 1;
-
-            glm::vec3 p1 = getPosition(x1,y1);
-            glm::vec3 p2 = getPosition(x2,y1);
-            glm::vec3 p3 = getPosition(x2,y2);
-            glm::vec3 p4 = getPosition(x1,y2);
-
-            glm::vec3 n1 = getNormal(x1,y1);
-            glm::vec3 n2 = getNormal(x2,y1);
-            glm::vec3 n3 = getNormal(x2,y2);
-            glm::vec3 n4 = getNormal(x1,y2);
-
-            // tris 1
-            // x1y1z1
-            // x2y1z2
-            // x2y2z3
-            addPointToVector(p1, verts);
-            addPointToVector(n1, verts);
-            addPointToVector(getColor(n1, p1), verts);
-
-            addPointToVector(p2, verts);
-            addPointToVector(n2, verts);
-            addPointToVector(getColor(n2, p2), verts);
-
-            addPointToVector(p3, verts);
-            addPointToVector(n3, verts);
-            addPointToVector(getColor(n3, p3), verts);
-
-            // tris 2
-            // x1y1z1
-            // x2y2z3
-            // x1y2z4
-            addPointToVector(p1, verts);
-            addPointToVector(n1, verts);
-            addPointToVector(getColor(n1, p1), verts);
-
-            addPointToVector(p3, verts);
-            addPointToVector(n3, verts);
-            addPointToVector(getColor(n3, p3), verts);
-
-            addPointToVector(p4, verts);
-            addPointToVector(n4, verts);
-            addPointToVector(getColor(n4, p4), verts);
-        }
-    }
+    TerrainGenerator::addToVerts();
 
     return verts;
 }
@@ -173,66 +127,16 @@ std::vector<float> TerrainGenerator::clearHeightMap(){
 // Generates the geometry of the output triangle mesh
 std::vector<float> TerrainGenerator::generateTerrain() {
 
-    //TerrainGenerator::loadImageFromFile("resources/slay.png");
-    //std::cout << heightInfo.size() << std::endl;
-    heightInfo = std::vector<float>(10000, 122.f/255);
-    heightMapWidth = 100;
-    heightMapHeight = 100;
+//    //TerrainGenerator::loadImageFromFile("resources/slay.png");
+//    //std::cout << heightInfo.size() << std::endl;
+//    heightInfo = std::vector<float>(10000, 122.f/255);
+//    heightMapWidth = 100;
+//    heightMapHeight = 100;
 
     isResetTerrain = true;
+
     verts.reserve(m_resolution * m_resolution * 6);
-    for(int x = 0; x < m_resolution - 1; x++) {
-        for(int y = 0; y < m_resolution - 1; y++) {
-
-            int x1 = x;
-            int y1 = y;
-
-            int x2 = x + 1;
-            int y2 = y + 1;
-
-            glm::vec3 p1 = getPosition(x1,y1);
-            glm::vec3 p2 = getPosition(x2,y1);
-            glm::vec3 p3 = getPosition(x2,y2);
-            glm::vec3 p4 = getPosition(x1,y2);
-
-            glm::vec3 n1 = getNormal(x1,y1);
-            glm::vec3 n2 = getNormal(x2,y1);
-            glm::vec3 n3 = getNormal(x2,y2);
-            glm::vec3 n4 = getNormal(x1,y2);
-
-            // tris 1
-            // x1y1z1
-            // x2y1z2
-            // x2y2z3
-            addPointToVector(p1, verts);
-            addPointToVector(n1, verts);
-            addPointToVector(getColor(n1, p1), verts);
-
-            addPointToVector(p2, verts);
-            addPointToVector(n2, verts);
-            addPointToVector(getColor(n2, p2), verts);
-
-            addPointToVector(p3, verts);
-            addPointToVector(n3, verts);
-            addPointToVector(getColor(n3, p3), verts);
-
-            // tris 2
-            // x1y1z1
-            // x2y2z3
-            // x1y2z4
-            addPointToVector(p1, verts);
-            addPointToVector(n1, verts);
-            addPointToVector(getColor(n1, p1), verts);
-
-            addPointToVector(p3, verts);
-            addPointToVector(n3, verts);
-            addPointToVector(getColor(n3, p3), verts);
-
-            addPointToVector(p4, verts);
-            addPointToVector(n4, verts);
-            addPointToVector(getColor(n4, p4), verts);
-        }
-    }
+    TerrainGenerator::addToVerts();
 
     return verts;
 }
