@@ -5,6 +5,13 @@
 #include "glm/glm.hpp"
 #include "src/RGBA.h"
 
+#include <QElapsedTimer>
+#include <QOpenGLWidget>
+#include <QTime>
+#include <QTimer>
+
+#include <chrono>
+
 class TerrainGenerator
 {
 
@@ -15,7 +22,13 @@ class TerrainGenerator
 
 
 public:
+    typedef std::chrono::milliseconds chrono;
+//    auto start;
 
+    int m_timer;                                        // Stores timer which attempts to run ~60 times per second
+    QElapsedTimer m_elapsedTimer;                       // Stores timer which keeps track of actual time between frames
+
+    void tick(QTimerEvent* event);                      // Called once per tick of m_timer
 
     bool m_wireshade;
 
@@ -50,6 +63,7 @@ private:
     // Takes a grid coordinate (row, col), [0, m_resolution), which describes a vertex in a plane mesh
     // Returns a normalized position (x, y, z); x and y in range from [0, 1), and z is obtained from getHeight()
     glm::vec3 getPosition(int row, int col);
+    glm::vec3 getRipple(int row, int col, auto clock);
 
     // ================== Students, please focus on the code below this point
 
@@ -66,8 +80,6 @@ private:
     // Computes the intensity of Perlin noise at some point
     float computePerlin(float x, float y);
 
-
     void loadImageFromFile(const std::string &file);
-
 
 };

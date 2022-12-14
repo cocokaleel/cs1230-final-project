@@ -8,17 +8,40 @@
 #include <QDir>
 #include <iostream>
 #include "glm/gtc/matrix_transform.hpp"
+#include <QCoreApplication>
+#include <QMouseEvent>
+#include <QKeyEvent>
 
 GLWidget::GLWidget(QWidget *parent)
     : QOpenGLWidget(parent), m_angleX(0), m_angleY(0), m_zoom(1.0)
-{}
+{
+//    setMouseTracking(true);
+    setFocusPolicy(Qt::StrongFocus);
 
-GLWidget::~GLWidget() {}
+    m_keyMap[Qt::Key_W]       = false;
+    m_keyMap[Qt::Key_A]       = false;
+    m_keyMap[Qt::Key_S]       = false;
+    m_keyMap[Qt::Key_D]       = false;
+    m_keyMap[Qt::Key_Control] = false;
+    m_keyMap[Qt::Key_Space]   = false;
+}
+
+GLWidget::~GLWidget() {
+//    setMouseTracking(true);
+//    setFocusPolicy(Qt::StrongFocus);
+
+//    m_keyMap[Qt::Key_W]       = false;
+//    m_keyMap[Qt::Key_A]       = false;
+//    m_keyMap[Qt::Key_S]       = false;
+//    m_keyMap[Qt::Key_D]       = false;
+//    m_keyMap[Qt::Key_Control] = false;
+//    m_keyMap[Qt::Key_Space]   = false;
+}
 
 void GLWidget::initializeGL()
 {
-//    m_timer = startTimer(1000/60);
-//    m_elapsedTimer.start();
+    m_timer = startTimer(1000/60);
+    m_elapsedTimer.start();
 
     // GLEW is a library which provides an implementation for the OpenGL API
     // Here, we are setting it up
@@ -77,17 +100,23 @@ void GLWidget::initializeGL()
 //reset vertex map//should change the value for future too???
 void GLWidget::resetHeightMap(){
     verts = m_terrain.clearHeightMap();
+
     m_terrainVbo.bind();
     m_terrainVbo.allocate(verts.data(),verts.size()*sizeof(GLfloat));
     m_terrainVbo.release();
+
+    m_elapsedTimer.restart();
     update();
 };
 
 void GLWidget::useNewHeightMap(std::vector<RGBA> canvasData){
     verts = m_terrain.newHeightMap(canvasData);
+
     m_terrainVbo.bind();
-    m_terrainVbo.allocate(verts.data(),verts.size()*sizeof(GLfloat));
+    m_terrainVbo.allocate(verts.data(), verts.size() * sizeof(GLfloat));
     m_terrainVbo.release();
+
+    m_elapsedTimer.restart();
     update();
 }
 
@@ -106,6 +135,14 @@ void GLWidget::paintGL()
     glPolygonMode(GL_FRONT_AND_BACK,m_terrain.m_wireshade? GL_LINE : GL_FILL);
     glDrawArrays(GL_TRIANGLES, 0, res * res * 6);
 
+//    float ticks = m_elapsedTimer.elapsed() * 0.001f;
+//    std::cout << ticks << " TICKS" << std::endl;
+
+//    float itzy = 1* exp(-ticks) * (cos(2 * M_PI * ticks));
+//    std::cout << itzy << " ITZY" << std::endl;
+
+//    std::cout << "GIDLE" << std::endl;
+
     m_program->release();
 }
 
@@ -115,10 +152,35 @@ void GLWidget::resizeGL(int w, int h)
     m_proj.perspective(45.0f, GLfloat(w) / h, 0.01f, 100.0f);
 }
 
+//void displayFunction(void) {
+//    std::cout << "GIDLE" << std::endl;
+//}
+
+//void GLWidget::mousePressEvent(QMouseEvent *event) {
+//    if (event->buttons().testFlag(Qt::LeftButton)) {
+//        m_mouseDown = true;
+//        m_prevMousePos = event->pos();
+//    }
+//}
+
+//void GLWidget::mouseReleaseEvent(QMouseEvent *event) {
+//    if (!event->buttons().testFlag(Qt::LeftButton)) {
+//        m_mouseDown = false;
+//    }
+//}
+
 void GLWidget::mousePressEvent(QMouseEvent *event) {
     m_prevMousePos = event->pos();
+//    isAnimate = true;
+
+//    std::cout << (float) m_elapsedTimer.elapsed() * 0.001f << " TIMER" << std::endl;
+
 //    std::cout << m_prevMousePos.x() << " POS X" << std::endl;
 //    std::cout << m_prevMousePos.y() << " POS Y" << std::endl;
+
+//    while (true) {
+//        rebuildMatrices();
+//    }
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event) {
@@ -134,22 +196,146 @@ void GLWidget::wheelEvent(QWheelEvent *event) {
 }
 
 void GLWidget::rebuildMatrices() {
+//    if (m_mouseDown) {
     m_camera.setToIdentity();
+
     QMatrix4x4 rot;
     rot.setToIdentity();
     rot.rotate(-10 * m_angleX,QVector3D(0,0,1));
+
     QVector3D eye = QVector3D(1,1,1);
     eye = rot.map(eye);
+
     rot.setToIdentity();
     rot.rotate(-10 * m_angleY,QVector3D::crossProduct(QVector3D(0,0,1),eye));
-    eye = rot.map(eye);
 
+    eye = rot.map(eye);
     eye = eye * m_zoom;
 
-    m_camera.lookAt(eye,QVector3D(0,0,0),QVector3D(0,0,1));
+//    std::cout << m_elapsedTimer.elapsed() << " ELAPSED" << std::endl;
+//    float timer = m_elapsedTimer.elapsed() * 0.001f;
+
+//    eye += (QVector3D(timer, timer, timer));
+
+    m_camera.lookAt(eye, QVector3D(0,0,0), QVector3D(0,0,1));
+
+    // NEW
+//    float camX = sin(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
+//    float camY = sin(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
+//    float camZ = cos(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
+
+////    std::cout << m_elapsedTimer.elapsed() * 0.001f << std::endl;
+
+//    if (5.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 5.05f) {
+//        std::cout << "NO HITZY" << std::endl;
+//    }
+
+////    QVector4D aespa = m_camera.column(3);
+////    std::cout << eye.x() << " " << eye.y() << " " << eye.z() << " ASSPA" << std::endl;
+
+////    if (aespa.x() == 0 || aespa.z() == 0) {
+////        std::cout << "SHITZY" << std::endl;
+////    }
+
+////    while (true) {
+//        std::cout << "ASSPA" << std::endl;
+//        m_camera.lookAt(QVector3D(camX, camY, camZ), QVector3D(0,0,0), QVector3D(0,1,0));
+////    }
+
+
+//    m_proj.setToIdentity();
+//    m_proj.perspective(45.0f, 1.0 * width() / height(), 0.01f, 100.0f);
+
+//    itzy += 0.01f;
+    update();
+//    }
+}
+
+void GLWidget::spinInCircle() {
+    m_camera.setToIdentity();
+
+    QMatrix4x4 rot;
+    rot.setToIdentity();
+    rot.rotate(-10 * m_angleX,QVector3D(0,0,1));
+
+    QVector3D eye = QVector3D(1,1,1);
+    eye = rot.map(eye);
+
+    rot.setToIdentity();
+    rot.rotate(-10 * m_angleY,QVector3D::crossProduct(QVector3D(0,0,1),eye));
+
+    eye = rot.map(eye);
+    eye = eye * m_zoom;
+
+//    std::cout << m_elapsedTimer.elapsed() << " ELAPSED" << std::endl;
+//    float timer = m_elapsedTimer.elapsed() * 0.001f;
+
+//    eye += (QVector3D(timer, timer, timer));
+
+//    m_camera.lookAt(eye, QVector3D(0,0,0), QVector3D(0,0,1));
+
+    // NEW
+    float camX = sin(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
+    float camY = sin(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
+    float camZ = cos(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
+
+//    std::cout << m_elapsedTimer.elapsed() * 0.001f << std::endl;
+
+    if (5.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 5.05f) {
+        std::cout << "NO HITZY" << std::endl;
+    }
+
+//    QVector4D aespa = m_camera.column(3);
+//    std::cout << eye.x() << " " << eye.y() << " " << eye.z() << " ASSPA" << std::endl;
+
+//    if (aespa.x() == 0 || aespa.z() == 0) {
+//        std::cout << "SHITZY" << std::endl;
+//    }
+
+//    while (true) {
+        std::cout << "ASSPA" << std::endl;
+        m_camera.lookAt(QVector3D(camX, camY, camZ), QVector3D(0,0,0), QVector3D(0,1,0));
+//    }
+
 
     m_proj.setToIdentity();
     m_proj.perspective(45.0f, 1.0 * width() / height(), 0.01f, 100.0f);
 
+//    itzy += 0.01f;
     update();
+}
+
+void GLWidget::keyPressEvent(QKeyEvent *event) {
+    std::cout << "PRESS" << std::endl;
+    m_keyMap[Qt::Key(event->key())] = true;
+}
+
+void GLWidget::keyReleaseEvent(QKeyEvent *event) {
+    std::cout << "RELEASE" << std::endl;
+    m_keyMap[Qt::Key(event->key())] = false;
+}
+
+void GLWidget::timerEvent(QTimerEvent *event) {
+    std::cout << "TIMER EVENT" << std::endl;
+
+//    int elapsedms   = m_elapsedTimer.elapsed();
+//    float deltaTime = elapsedms * 0.001f;
+//    m_elapsedTimer.restart();
+
+    // Use deltaTime and m_keyMap here to move around
+
+////    if (m_keyMap[Qt::Key_W]) {
+//        std::cout << "W" << std::endl;
+
+//        float camX = sin(deltaTime) * 2.f;
+//        float camZ = cos(deltaTime) * 2.f;
+
+//        m_camera.lookAt(QVector3D(camX, 0.f, camZ), QVector3D(0,0,0), QVector3D(0,1,0));
+////    }
+
+//    update(); // asks for a PaintGL() call to occur
+
+    if (isAnimate) {
+        spinInCircle();
+    }
 }

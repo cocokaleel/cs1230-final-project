@@ -53,6 +53,8 @@ void MainWindow::setupUI()
 
     // clearing canvas
     addPushButton(brushLayout, "Clear canvas", &MainWindow::onClearButtonClick);
+    addPushButton(brushLayout, "Camera Path", &MainWindow::onAnimateButtonClick);
+
     //using new heightmap
     addPushButton(brushLayout, "Use New Height Map", &MainWindow::onUseMapButtonClick);
 
@@ -132,9 +134,21 @@ void MainWindow::onClearButtonClick() {
 void MainWindow::onUseMapButtonClick() {
     //passes down a scaled down 100 x 100 canvas image
     glWidget->useNewHeightMap(m_canvas->getCanvasData());
-std::cout<<"reset terrain vertices..."<<std::endl;
-
+    std::cout<<"reset terrain vertices..."<<std::endl;
 }
+
+void MainWindow::onAnimateButtonClick() {
+    if (glWidget->isAnimate) {
+        glWidget->isAnimate = false;
+        glWidget->m_elapsedTimer.restart();
+
+    } else {
+        glWidget->isAnimate = true;
+    }
+
+    std::cout<<"fixed bezier curve..."<<std::endl;
+}
+
 
 void MainWindow::setupCanvas2D() {
     m_canvas = new Canvas2D();

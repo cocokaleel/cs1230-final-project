@@ -24,6 +24,7 @@ private:
 
     void onClearButtonClick();
     void onUseMapButtonClick();
+    void onAnimateButtonClick();
 
     void setBrushType(int type);
     void setUIntVal(std::uint8_t &r, std::uint8_t &b, std::uint8_t &g, int newValue);

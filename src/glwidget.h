@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __APPLE__
+#define GL_SILENCE_DEPRECATION
+#endif
+
 #include "GL/glew.h"
 #include <QOpenGLWidget>
 #include <QOpenGLVertexArrayObject>
@@ -11,6 +15,11 @@
 #include <QOpenGLWidget>
 #include <QTime>
 #include <QTimer>
+
+#include <unordered_map>
+#include <QFile>
+#include <iostream>
+#include <QTextStream>
 
 QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram)
 
@@ -30,6 +39,10 @@ public:
 
     void tick(QTimerEvent* event);                      // Called once per tick of m_timer
 
+    float itzy = 0.f;
+    bool m_mouseDown = false;
+    bool isAnimate = false;
+
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -38,11 +51,23 @@ protected:
     void mouseMoveEvent(QMouseEvent *e) override;
     void wheelEvent(QWheelEvent *e) override;
 
+//    void mouseReleaseEvent(QMouseEvent *event) override;
+
+    void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
+    void timerEvent(QTimerEvent *event) override;
+
 private:
+
+
+
+    void spinInCircle();
+    std::unordered_map<Qt::Key, bool> m_keyMap;         // Stores whether keys are pressed or not
+
     void rebuildMatrices();
     //void resetVBO(QOpenGLBuffer& vbo, std::vector<GLfloat>vertexData);
 
-    void timerEvent(QTimerEvent *event) override;
+//    void timerEvent(QTimerEvent *event) override;
 
     std::vector<GLfloat> verts;
     bool isClearing = false;

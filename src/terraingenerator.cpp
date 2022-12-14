@@ -40,7 +40,6 @@ std::vector<float>  TerrainGenerator::newHeightMap(std::vector<RGBA> newHeightMa
 
     //how to access in reverse lol
     for(RGBA &color: newHeightMapInfo){
-//        std::cout<< color.r << std::endl;
         heightInfo.push_back(color.r / 255.f);//check here if incorrect height
     }
     //set new height info
@@ -173,6 +172,7 @@ std::vector<float> TerrainGenerator::clearHeightMap(){
 
 // Generates the geometry of the output triangle mesh
 std::vector<float> TerrainGenerator::generateTerrain() {
+    auto start = std::chrono::steady_clock::now();
 
     TerrainGenerator::loadImageFromFile("resources/slay.png");
     //std::cout << heightInfo.size() << std::endl;
@@ -191,10 +191,10 @@ std::vector<float> TerrainGenerator::generateTerrain() {
             int x2 = x + 1;
             int y2 = y + 1;
 
-            glm::vec3 p1 = getPosition(x1,y1);
-            glm::vec3 p2 = getPosition(x2,y1);
-            glm::vec3 p3 = getPosition(x2,y2);
-            glm::vec3 p4 = getPosition(x1,y2);
+            glm::vec3 p1 = getRipple(x1,y1, start);
+            glm::vec3 p2 = getRipple(x2,y1, start);
+            glm::vec3 p3 = getRipple(x2,y2, start);
+            glm::vec3 p4 = getRipple(x1,y2, start);
 
             glm::vec3 n1 = getNormal(x1,y1);
             glm::vec3 n2 = getNormal(x2,y1);
@@ -242,7 +242,7 @@ std::vector<float> TerrainGenerator::generateTerrain() {
 // Takes a grid coordinate (row, col), [0, m_resolution), which describes a vertex in a plane mesh
 // Returns a normalized position (x, y, z); x and y in range from [0, 1), and z is obtained from getHeight()
 glm::vec3 TerrainGenerator::getPosition(int row, int col) {
-    // Normalizing the planar coordinates to a unit square 
+    // Normalizing the planar coordinates to a unit square
     // makes scaling independent of sampling resolution.
     float x = 1.f * row / m_resolution;
     float y = 1.f * col / m_resolution;
@@ -254,7 +254,44 @@ glm::vec3 TerrainGenerator::getPosition(int row, int col) {
         z = (122.f/255)/10;
     }
 
-    return glm::vec3(x,y,z);
+//    std::cout << "AESPA" << std::endl;
+//    auto end = std::chrono::steady_clock::now();
+//    auto itzy = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()
+
+    return glm::vec3(x,y,z + 0.5f);
+}
+
+glm::vec3 TerrainGenerator::getRipple(int row, int col, auto clock) {
+    // Normalizing the planar coordinates to a unit square
+    // makes scaling independent of sampling resolution.
+    float x = 1.f * row / m_resolution;
+    float y = 1.f * col / m_resolution;
+    float z = 0.f;
+
+    if (!isResetTerrain){
+        z = getHeight(row, col);
+    } else {
+        z = (122.f/255)/10;
+    }
+
+//    std::cout << "AESPA" << std::endl;
+    auto end = std::chrono::steady_clock::now();
+    float itzy = std::chrono::duration_cast<std::chrono::microseconds>(end - clock).count();
+    itzy = itzy * 0.001f;
+
+    float aepsa = 1* exp(-itzy) * (cos(2 * M_PI * itzy));
+
+    //    float ticks = m_elapsedTimer.elapsed() * 0.001f;
+    //    std::cout << ticks << " TICKS" << std::endl;
+
+    //    float itzy = 1* exp(-ticks) * (cos(2 * M_PI * ticks));
+    //    std::cout << itzy << " ITZY" << std::endl;
+
+//    std::cout << itzy << " ITZY" << std::endl;
+//    std::cout << aepsa << " AESPA" << std::endl;
+
+//    return glm::vec3(x, y, z * (aepsa * 100000));
+    return glm::vec3(x, y, z);
 }
 
 // ================== Students, please focus on the code below this point
