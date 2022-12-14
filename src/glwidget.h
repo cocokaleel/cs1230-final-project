@@ -34,6 +34,21 @@ private:
 
 
     std::vector<GLfloat> verts;
+    std::vector<GLfloat> fullscreen_quad_verts =
+        { //     POSITIONS    //
+            -1.f,  1.f, 0.0f, //position
+                  0.f, 1.f, //uv
+            -1.f, -1.0f, 0.0f,
+                  0.f, 0.f,
+             1.f, -1.0f, 0.0f,
+                  1.f, 0.f,
+             1.f,  1.f, 0.0f,
+                  1.f, 1.f,
+            -1.f,  1.f, 0.0f,
+                  0.f, 1.f,
+             1.f, -1.f, 0.0f,
+                  1.f, 0.f,
+        };
     bool isClearing = false;
 
     int m_xRot = 0;
@@ -41,8 +56,10 @@ private:
     int m_zRot = 0;
 
     QOpenGLShaderProgram *m_program = nullptr;
-    QOpenGLVertexArrayObject m_terrainVao;
-    QOpenGLBuffer m_terrainVbo;
+//    QOpenGLVertexArrayObject m_terrainVao;
+    QOpenGLVertexArrayObject m_fullscreenQuadVao;
+//    QOpenGLBuffer m_terrainVbo;
+    QOpenGLBuffer m_fullscreenQuadVbo;
 
     QMatrix4x4 m_proj;
     QMatrix4x4 m_camera;

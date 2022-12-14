@@ -35,29 +35,29 @@ void GLWidget::initializeGL()
     m_projMatrixLoc = m_program->uniformLocation("projMatrix");
     m_mvMatrixLoc = m_program->uniformLocation("mvMatrix");
 
-    m_terrainVao.create();
-    m_terrainVao.bind();
+    m_fullscreenQuadVao.create();
+    m_fullscreenQuadVao.bind();
 
     verts = m_terrain.generateTerrain();
-    m_terrainVbo.create();
-    m_terrainVbo.bind();
-    m_terrainVbo.allocate(verts.data(),verts.size()*sizeof(GLfloat));
+    m_fullscreenQuadVbo.create();
+    m_fullscreenQuadVbo.bind();
+    m_fullscreenQuadVbo.allocate(fullscreen_quad_verts.data(),fullscreen_quad_verts.size()*sizeof(GLfloat));
 
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
+//    glEnableVertexAttribArray(2);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat),
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),
                              nullptr);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat),
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),
                              reinterpret_cast<void *>(3 * sizeof(GLfloat)));
 
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat),
-                             reinterpret_cast<void *>(6 * sizeof(GLfloat)));
+//    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat),
+//                             reinterpret_cast<void *>(6 * sizeof(GLfloat)));
 
-    m_terrainVbo.release();
+    m_fullscreenQuadVbo.release();
 
 
     m_world.setToIdentity();
@@ -74,24 +74,18 @@ void GLWidget::initializeGL()
 //reset vertex map//should change the value for future too???
 void GLWidget::resetHeightMap(){
     verts = m_terrain.clearHeightMap();
-    m_terrainVbo.bind();
-    m_terrainVbo.allocate(verts.data(),verts.size()*sizeof(GLfloat));
-    m_terrainVbo.release();
     update();
 };
 
 void GLWidget::useNewHeightMap(std::vector<RGBA> canvasData){
     verts = m_terrain.newHeightMap(canvasData);
-    m_terrainVbo.bind();
-    m_terrainVbo.allocate(verts.data(),verts.size()*sizeof(GLfloat));
-    m_terrainVbo.release();
     update();
 }
 
 void GLWidget::finish(){
     this->makeCurrent();
-    m_terrainVbo.destroy();
-    m_terrainVao.destroy();
+    m_fullscreenQuadVbo.destroy();
+    m_fullscreenQuadVao.destroy();
     delete m_program;
     m_program = nullptr;
     this->doneCurrent();

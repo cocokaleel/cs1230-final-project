@@ -1,20 +1,16 @@
 #version 330 core
-layout(location = 0) in vec3 vertex;
-layout(location = 1) in vec3 normal;
-layout(location = 2) in vec3 inColor;
-out vec4 vert;
-out vec4 norm;
-out vec3 color;
-out vec3 lightDir;
+//Adapted from lab 10
 
-uniform mat4 projMatrix;
-uniform mat4 mvMatrix;
+//information laid out from the fullscreen quad VAO
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec2 uv;
 
-void main()
-{
-    vert  = mvMatrix * vec4(vertex, 1.0);
-    norm  = transpose(inverse(mvMatrix)) *  vec4(normal, 0.0);
-    color = inColor;
-    lightDir = normalize(vec3(mvMatrix * vec4(1, 0, 1, 0)));
-    gl_Position = projMatrix * mvMatrix * vec4(vertex, 1.0);
+// a variable to send uv coordinates to the frag shader
+out vec2 uvCoords;
+
+void main() {
+    // Task 16: assign the UV layout variable to the UV "out" variable
+    uvCoords = uv;
+
+    gl_Position = vec4(position, 1.0);
 }

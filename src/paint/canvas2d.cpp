@@ -20,6 +20,8 @@ void Canvas2D::init(){
  * @brief Canvas2D::clearCanvas sets all canvas pixels to blank white
  */
 void Canvas2D::clearCanvas() {
+    m_data.clear();
+    m_data.reserve(m_width * m_height);
     m_data.assign(m_width * m_height, RGBA{122, 122, 122, 255});
     settings.imagePath = "";
     displayImage();
@@ -259,6 +261,7 @@ std::vector<RGBA> Canvas2D::getCanvasData(){
     Canvas2D::scaleH(newData, 100, m_height, 100.f/m_height);
 
     std::vector<RGBA> mirrorData;
+    mirrorData.reserve(100 * 100 * 4); //TODO there is no way this is the right size
 
     for(int y = 100; y > 0; y--){
         for(int x = 100; x > 0; x--){
@@ -266,6 +269,9 @@ std::vector<RGBA> Canvas2D::getCanvasData(){
         }
 
     }
+
+    std::cout <<"Mirror data size: " << mirrorData.size() << std::endl;
+    std::cout <<"newdata size: " << newData.size() << std::endl;
 
     return mirrorData;
 }
