@@ -8,7 +8,7 @@ struct Ray {
 };
 Ray getOriginalRayWorldSpace();
 struct IntersectionResult {
-    int shapeIndex;
+    int triangleIndex;
     vec4 intersectionPositionWorld;
     vec4 intersectionNormalWorld;
 };
@@ -54,19 +54,32 @@ struct LightColorPos {
 //create a uniform input for the light data
 uniform LightColorPos lights[8];
 // INSPO FOR SHAPE STRUCT
-struct ShapeData {
-    mat4 ctm;
-    mat4 ctmInv;
-    mat3 normalMat;
-    int type; //0 is sphere
+//struct ShapeData {
+//    mat4 ctm;
+//    mat4 ctmInv;
+//    mat3 normalMat;
+//    int type; //0 is sphere
+//    vec4 cAmbient;
+//    vec4 cDiffuse;
+//    vec4 cSpecular;
+//    float shininess;
+//    vec4 cReflective;
+//};
+//uniform ShapeData shapes[50]; //constrains it to only one shape being passed in
+//uniform int numShapes;
+
+struct TriangleData {
+    vec3[3] points;
+    vec3[3] normals;
     vec4 cAmbient;
     vec4 cDiffuse;
     vec4 cSpecular;
     float shininess;
     vec4 cReflective;
 };
-uniform ShapeData shapes[50]; //constrains it to only one shape being passed in
-uniform int numShapes;
+uniform TriangleData triangles[2];
+uniform int numTriangles;
+
 
 //This main function raytraces a ray through the UV coordinate within a triangle on a full-screen quad. It raytraces only a single ray.
 void main() {
@@ -79,7 +92,7 @@ void main() {
 
     //There is no recursion in GLSL,
     //Thus I had to do this iteratively :(
-    if (intersection.shapeIndex != -1) {
+    if (intersection.triangleIndex != -1) {
 
         //If the ray hits something, get its Phong color
         fragColor = phongColor(intersection);
@@ -89,10 +102,10 @@ void main() {
             //bounce ray and trace it
             reflectedRay = getReflectedRay(intersection, ray1);
             IntersectionResult intersection2 = traceRay(reflectedRay);
-            if (intersection.shapeIndex != -1) {
+            if (intersection.triangleIndex != -1) {
                 //if bounced ray hits, add its color contribution to the shape
                 vec4 shape2Color = phongColor(intersection2);
-                fragColor += ks*shapes[intersection.shapeIndex].cReflective*shape2Color;
+                fragColor += ks*triangles[intersection.triangleIndex].cReflective*shape2Color;
 
                 intersection = intersection2;
                 ray1 = reflectedRay;
@@ -148,87 +161,87 @@ bool shadowRayClear(IntersectionResult shapeIntersection, int lightIndex) {
 
     IntersectionResult shadowRayIntersection = traceRay(shadowRay);
 
-    //if the ray doesn't intersect any shapes, the shapeIndex of the intersection result will be -1
-    return shadowRayIntersection.shapeIndex == -1;
+    //if the ray doesn't intersect any shapes, the triangleIndex of the intersection result will be -1
+    return shadowRayIntersection.triangleIndex == -1;
 }
 
 //find the FIRST intersected shape (primitives as of right now) that the ray passes through and return the
 //position of intersection, normal, and which shape (in the form of the shape's index) was intersected
 IntersectionResult traceRay(Ray rayWorldSpace) {
     float t = 1. / 0.; //infinity
-    int shapeIndex = -1;
-    //loop through all the shapes, keeping track of the smallest T value, and the shape index, normal, and position associated with this
-    for (int i = 0; i < numShapes; i++) {
-        vec4 rayObjectStartPosition = shapes[i].ctmInv*rayWorldSpace.startPosition;
-        vec4 rayObjectDirection = shapes[i].ctmInv*rayWorldSpace.direction;
-        Ray rayObjectSpace = Ray(rayObjectStartPosition, rayObjectDirection);
+    int triangleIndex = -1;
+    vec4 intersectionWorld;
+    vec4 normalWorld;
 
-        vec3 d = vec3(rayObjectSpace.direction); //converting from vec4 to vec3
-        vec3 p = vec3(rayObjectSpace.startPosition); //converting from vec4 to vec3
-
-        //SPHERE
-        if (shapes[i].type == 0) {
-            //t^2(d0^2 + d1^2 + d2^2) + t(2p0d0 + 2p1t1 + 2p2d2) + (p0^2 + p1^2 + p2^2 -1) = 0;
-            float A = d[0]*d[0] + d[1]*d[1] + d[2]*d[2];
-            float B = 2*(p[0]*d[0]+p[1]*d[1]+p[2]*d[2]);
-            float C = p[0]*p[0]+p[1]*p[1]+p[2]*p[2] - 0.25f;
-
-            float t1 = (-B + sqrt(B*B-4*A*C))/(2*A);
-            float t2 = (-B - sqrt(B*B-4*A*C))/(2*A);
-
-            if (t1 >= 0 && t1<= t) { //!(isinf(t1)) &&
-                shapeIndex = i;
-                t = t1;
-            }
-
-            if (t2 >= 0 && t2<= t) { //!isinf(t2) &&
-                shapeIndex = i;
-                t = t2;
-            }
-        }
+    //loop through triangles
+    for (int i = 0; i < numTriangles; i++) {
+        //Formula inspiration from https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/ray-triangle-intersection-geometric-solution
         //intersect
+        vec3 edge01 = vec3(triangles[i].points[1]-triangles[i].points[0]);
+        vec3 edge02 = vec3(triangles[i].points[2]-triangles[i].points[0]);
+        vec3 planeNormal = cross(edge01, edge02);
+        //check if ray and triangle are parallel so no impossible shenanigans happens
+        float angleNormalAndDirection = dot(planeNormal, vec3(rayWorldSpace.direction));
+
+        //if the angle between the two vectors is approximately zero, there is
+        //no intersection and this triangle should be skipped
+        if (abs(angleNormalAndDirection)<0.01) continue;
+
+
+        //find the hit of the ray on the plane defined by the vertices of the triangle
+
+        float d = -dot(planeNormal,triangles[i].points[0]); //d is a parameter of the parametric definition of a plane
+        float t_i = -(dot(planeNormal, vec3(rayWorldSpace.startPosition))+d)/angleNormalAndDirection;
+
+        if (t_i < 0) continue; //if the intersection is behind
+
+        //check if point of intersection is between vertices
+
+        vec3 intersectionPoint = vec3(rayWorldSpace.startPosition + t_i * rayWorldSpace.direction);
+        //check edge 0-1
+        vec3 v0ToIntersectionPoint = vec3(intersectionPoint - triangles[i].points[0]);
+        //check that the direction to p is in between the edge by making sure it's cross product is opposite the normal
+        vec3 cross0 = cross(edge01,v0ToIntersectionPoint);
+//        if (dot(planeNormal, cross0)<0) continue;
+        //check edge 1-2
+        vec3 edge12 = vec3(triangles[i].points[2]-triangles[i].points[1]);
+        vec3 v1ToIntersectionPoint = vec3(intersectionPoint - triangles[i].points[1]);
+        //check that the direction to p is in between the edge by making sure it's cross product is opposite the normal
+        vec3 cross1 = cross(edge12,v1ToIntersectionPoint);
+//        if (dot(planeNormal, cross1)<0) continue;
+        //check edge 2-0
+        vec3 edge20 = vec3(triangles[i].points[0]-triangles[i].points[2]);
+        vec3 v2ToIntersectionPoint = vec3(intersectionPoint - triangles[i].points[2]);
+        //check that the direction to p is in between the edge by making sure it's cross product is opposite the normal
+        vec3 cross2 = cross(edge20,v2ToIntersectionPoint);
+//        if (dot(planeNormal, cross2)<0) continue;
+
+        //now that the point has passed all the tests, it should in theory be in the triangle
+        if (dot(planeNormal, cross0)>=0 && dot(planeNormal, cross1)>=0 && dot(planeNormal, cross2)>=0) {
+            triangleIndex = i;
+            intersectionWorld = vec4(intersectionPoint, 1.f);
+            normalWorld = vec4(planeNormal, 0.f);
+        }
+
     }
 
     //If no shape intersection was found
-    if (shapeIndex == -1) {
+    if (triangleIndex == -1) {
         //return a bad IntersectionResult
         return IntersectionResult(-1, vec4(1.f), vec4(1.f));
     }
 
-
-    vec4 rayObjectStartPosition = shapes[shapeIndex].ctmInv*rayWorldSpace.startPosition;
-    vec4 rayObjectDirection = shapes[shapeIndex].ctmInv*rayWorldSpace.direction;
-
-    //get the intersection point in object space
-    vec4 intersectionObject = rayObjectStartPosition + t*rayObjectDirection; //intersectionPoint
-
-    //move intersection point back
-    vec4 intersectionWorld = shapes[shapeIndex].ctm*intersectionObject;
-
-    //ONLY BECAUSE OF SPHERE CHANGE THIS FOR ANY OTHER SHAPE
-    //get normal in object space
-    if (shapes[shapeIndex].type == 0) {
-        vec4 normalObject = vec4(vec3(2*intersectionObject), 0.f);
-
-        //put normal back into world space
-        vec4 normalWorld = vec4(shapes[shapeIndex].normalMat * vec3(normalObject), 0.f); //todo change back to ctm?
-        //NOTE: QTCreator might show this instantiation patter as an error. It should work. Freaking QTCreator...
-        return IntersectionResult(shapeIndex, intersectionWorld, normalWorld);
-
-    } else {
-        //NOTE: QTCreator might show this instantiation patter as an error. It should work. Freaking QTCreator...
-        return IntersectionResult(-1, vec4(1.f), vec4(1.f));
-    }
+    return IntersectionResult(triangleIndex, intersectionWorld, normalWorld);
 }
 
 //Get the color of the shape at the intersected point
 vec4 phongColor (IntersectionResult intersection) {
-    if (intersection.shapeIndex == -1) {
+    if (intersection.triangleIndex == -1) {
         return vec4(0.f, 0.f, 0.f, 1.f);
     }
     vec4 color = vec4(0.f, 0.f, 0.f, 1.f);
     vec3 normal = vec3(normalize(intersection.intersectionNormalWorld));
-    color += ka * shapes[intersection.shapeIndex].cAmbient;
+    color += ka * triangles[intersection.triangleIndex].cAmbient;
 
     for (int i = 0; i < numLights; i++) {
         if (!shadowRayClear(intersection, i)) {
@@ -240,7 +253,7 @@ vec4 phongColor (IntersectionResult intersection) {
                float Id = kd * dot(normalize(normal), vec3(normalize(-lights[i].dir))); //only for directional lights
 
                //ADD FINAL DIFFUSE COMPONENT
-               color += vec4(vec3(max(Id,0)), 0.f) * shapes[intersection.shapeIndex].cDiffuse * lights[i].color;
+               color += vec4(vec3(max(Id,0)), 0.f) * triangles[intersection.triangleIndex].cDiffuse * lights[i].color;
 
                // Add specular component to output color
 //               vec4 pos4 = vec4(positionWorld, 1.f);
@@ -249,10 +262,10 @@ vec4 phongColor (IntersectionResult intersection) {
                vec4 directionToCamera = cameraPositionWorld - intersection.intersectionPositionWorld;
 
                float dotRE = dot(normalize(reflected), normalize(directionToCamera));
-               float spec = dotRE < 0 ? ks*pow(dotRE, shapes[intersection.shapeIndex].shininess) : 0;
+               float spec = dotRE < 0 ? ks*pow(dotRE, triangles[intersection.triangleIndex].shininess) : 0;
 
                //ADD FINAL SPECULAR COMPONENT
-               color += vec4(vec3(spec), 0.f)*lights[i].color * shapes[intersection.shapeIndex].cSpecular;
+               color += vec4(vec3(spec), 0.f)*lights[i].color * triangles[intersection.triangleIndex].cSpecular;
 
         } else if (lights[i].lightType == 1) {
                //POINT LIGHTS
@@ -265,15 +278,15 @@ vec4 phongColor (IntersectionResult intersection) {
 
                //compute and add diffuse component
                float diffuseComponent = attenuationFactor*lightComponent*kd;
-               color += vec4(vec3(max(diffuseComponent,0)), 0.f) * shapes[intersection.shapeIndex].cDiffuse * lights[i].color;
+               color += vec4(vec3(max(diffuseComponent,0)), 0.f) * triangles[intersection.triangleIndex].cDiffuse * lights[i].color;
 
                //compute and add specular component
                vec3 reflectedLight = reflect(-normalize(lightDirection), vec3(normal));
                vec3 directionToCamera = normalize(vec3(cameraPositionWorld)-vec3(intersection.intersectionPositionWorld));
-               float specularComponent = attenuationFactor * ks * pow(dot(reflectedLight, directionToCamera), shapes[intersection.shapeIndex].shininess);
+               float specularComponent = attenuationFactor * ks * pow(dot(reflectedLight, directionToCamera), triangles[intersection.triangleIndex].shininess);
 
                //if the light and the normal are in the same direction
-               fragColor += dot(-lightDirection, vec3(normal)) > 0 ?vec4(vec3(max(specularComponent,0)), 0.f) * shapes[intersection.shapeIndex].cSpecular * lights[i].color : vec4(0);
+               fragColor += dot(-lightDirection, vec3(normal)) > 0 ?vec4(vec3(max(specularComponent,0)), 0.f) * triangles[intersection.triangleIndex].cSpecular * lights[i].color : vec4(0);
 
         } else {
                 //SPOT LIGHTS
@@ -304,15 +317,15 @@ vec4 phongColor (IntersectionResult intersection) {
 
                 //compute and add diffuse component
                 float diffuseComponent = attenuationFactor*lightComponent*kd;
-                color += vec4(vec3(max(diffuseComponent,0)), 0.f) * shapes[intersection.shapeIndex].cDiffuse * lightColor;
+                color += vec4(vec3(max(diffuseComponent,0)), 0.f) * triangles[intersection.triangleIndex].cDiffuse * lightColor;
 
                 //compute and add specular component
                 vec3 reflectedLight = reflect(-normalize(lightDirection), vec3(normal));
                 vec3 directionToCamera = normalize(vec3(cameraPositionWorld)-vec3(intersection.intersectionPositionWorld));
-                float specularComponent = attenuationFactor * ks * pow(dot(reflectedLight, directionToCamera), shapes[intersection.shapeIndex].shininess);
+                float specularComponent = attenuationFactor * ks * pow(dot(reflectedLight, directionToCamera), triangles[intersection.triangleIndex].shininess);
 
                 //if the light and the normal are in the same direction
-                color += dot(-lightDirection, vec3(normal)) > 0 ?vec4(vec3(max(specularComponent,0)), 0.f) * shapes[intersection.shapeIndex].cSpecular * lightColor : vec4(0);
+                color += dot(-lightDirection, vec3(normal)) > 0 ?vec4(vec3(max(specularComponent,0)), 0.f) * triangles[intersection.triangleIndex].cSpecular * lightColor : vec4(0);
 
             }
         }

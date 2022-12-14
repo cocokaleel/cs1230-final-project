@@ -180,49 +180,41 @@ void GLWidget::paintGeometryPhong() {
     int numLights_loc = m_program->uniformLocation("numLights");
     m_program->setUniformValue(numLights_loc, numLights);
 
-    int shapeCounter = 0;
-    for (ShapeData shape : shapes) {
+    int triangleCounter = 0;
+    for (TriangleData triangle : triangles) {
 
         //pass in all the shape-specific information to the first full-screen quad shader
-        GLint matrix = m_program->uniformLocation(("shapes[" + std::to_string(shapeCounter) + "].ctm").c_str());
-        GLint matrixInv = m_program->uniformLocation(("shapes[" + std::to_string(shapeCounter) + "].ctmInv").c_str());
-        GLint normalMat = m_program->uniformLocation(("shapes[" + std::to_string(shapeCounter) + "].normalMat").c_str());
-        GLint type = m_program->uniformLocation(("shapes[" + std::to_string(shapeCounter) + "].type").c_str());
-        GLint cAmbient = m_program->uniformLocation(("shapes[" + std::to_string(shapeCounter) + "].cAmbient").c_str());
-        GLint cDiffuse = m_program->uniformLocation(("shapes[" + std::to_string(shapeCounter) + "].cDiffuse").c_str());
-        GLint cSpecular = m_program->uniformLocation(("shapes[" + std::to_string(shapeCounter) + "].cSpecular").c_str());
-        GLint shininess = m_program->uniformLocation(("shapes[" + std::to_string(shapeCounter) + "].shininess").c_str());
-        GLint cReflective = m_program->uniformLocation(("shapes[" + std::to_string(shapeCounter) + "].cReflective").c_str());
+        GLint points0 = m_program->uniformLocation(("triangles[" + std::to_string(triangleCounter) + "].points[0]").c_str());
+        GLint points1 = m_program->uniformLocation(("triangles[" + std::to_string(triangleCounter) + "].points[1]").c_str());
+        GLint points2 = m_program->uniformLocation(("triangles[" + std::to_string(triangleCounter) + "].points[2]").c_str());
+        GLint normals0 = m_program->uniformLocation(("triangles[" + std::to_string(triangleCounter) + "].normals[0]").c_str());
+        GLint normals1 = m_program->uniformLocation(("triangles[" + std::to_string(triangleCounter) + "].normals[1]").c_str());
+        GLint normals2 = m_program->uniformLocation(("triangles[" + std::to_string(triangleCounter) + "].normals[2]").c_str());
+        GLint cAmbient = m_program->uniformLocation(("triangles[" + std::to_string(triangleCounter) + "].cAmbient").c_str());
+        GLint cDiffuse = m_program->uniformLocation(("triangles[" + std::to_string(triangleCounter) + "].cDiffuse").c_str());
+        GLint cSpecular = m_program->uniformLocation(("triangles[" + std::to_string(triangleCounter) + "].cSpecular").c_str());
+        GLint shininess = m_program->uniformLocation(("triangles[" + std::to_string(triangleCounter) + "].shininess").c_str());
+        GLint cReflective = m_program->uniformLocation(("triangles[" + std::to_string(triangleCounter) + "].cReflective").c_str());
 
-        //pass in shape matrix and inverse matrix because inverting is costly
-        glUniformMatrix4fv(matrix, 1, GL_FALSE, &shape.ctm[0][0]);
-        glUniformMatrix3fv(normalMat, 1, GL_FALSE, &glm::inverse(glm::transpose(glm::mat3(shape.ctm)))[0][0]);
-        glUniformMatrix4fv(matrixInv, 1, GL_FALSE, &glm::inverse(shape.ctm)[0][0]);
+        glUniform3fv(points0, 1, &triangle.points[0][0]);
+        glUniform3fv(points1, 1, &triangle.points[1][0]);
+        glUniform3fv(points2, 1, &triangle.points[2][0]);
 
-
+        glUniform3fv(normals0, 1, &triangle.normals[0][0]);
+        glUniform3fv(normals1, 1, &triangle.normals[1][0]);
+        glUniform3fv(normals2, 1, &triangle.normals[2][0]);
         // Pass in shininess and color components
-        glUniform1f(shininess, shape.shininess);
-        glUniform4fv(cSpecular, 1, &shape.cSpecular[0]);
-        glUniform4fv(cAmbient, 1, &shape.cAmbient[0]);
-        glUniform4fv(cDiffuse, 1, &shape.cDiffuse[0]);
-        glUniform4fv(cReflective, 1, &shape.cReflective[0]);
+        glUniform1f(shininess, triangle.shininess);
+        glUniform4fv(cSpecular, 1, &triangle.cSpecular[0]);
+        glUniform4fv(cAmbient, 1, &triangle.cAmbient[0]);
+        glUniform4fv(cDiffuse, 1, &triangle.cDiffuse[0]);
+        glUniform4fv(cReflective, 1, &triangle.cReflective[0]);
 
-        //pass in the shape type
-        switch(shape.type) {
-        case 0:
-            glUniform1i(type, 0);
-            break;
 
-        default:
-            std::cerr << "Attempted to take on a shape that hasn't been modeled yet" << std::endl;
-            exit(1);
-            break;
-        }
-
-        shapeCounter++;
+        triangleCounter++;
     }
-    int numShapes_loc = m_program->uniformLocation("numShapes");
-    m_program->setUniformValue(numShapes_loc, numShapes);
+    int numTriangles_loc = m_program->uniformLocation("numTriangles");
+    m_program->setUniformValue(numTriangles_loc, triangleCounter);
 
     glDrawArrays(GL_TRIANGLES, 0, 6); //draw the fullscreen quad (6 vertices)
     glBindBuffer(GL_ARRAY_BUFFER, 0); //unbind buffer (though none should have been bound)

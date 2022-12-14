@@ -107,7 +107,7 @@ private:
      float ks = 0.54; //specular coefficient
 
      // holds the number of lights that exist in the scene (for looping purposes)
-     int numLights = 1;
+     int numLights = 4;
 
      //create a struct for holding light information
      struct LightColorPos {
@@ -120,7 +120,7 @@ private:
          float penumbra; //only for spot lights
      };
     //from unit sphere
-     LightColorPos lights[1] = {
+     LightColorPos lights[4] = {
          { //point light
              glm::vec4(1.f),//color;
              glm::vec4(-3,-2,-1,0), //dir //only for directional light
@@ -130,33 +130,33 @@ private:
              0,//angle; //only for spot lights
              0//penumbra;
          },
-//         { //point light
-//             glm::vec4(1.f),//color;
-//             glm::vec4(0.f), //dir //only for directional light
-//             glm::vec4(10, 10, 10, 1.f),//pos; //only for point light and spot light
-//             1,//lightType; //0 is directional, 1 is point, 2 is for spot
-//             glm::vec3(1.5, 0, 0),//attenuation;
-//             0,//angle; //only for spot lights
-//             0//penumbra;
-//         },
-//         {//directional light 1
-//              glm::vec4(1.f),//color;
-//              glm::vec4(0.25, 1, -1, 0), //dir //only for directional light
-//              glm::vec4(0),//pos; //only for point light and spot light
-//              0,//lightType; //0 is directional, 1 is point, 2 is for spot
-//              glm::vec3(0),//attenuation;
-//              0,//angle; //only for spot lights
-//              0//penumbra;
-//         },
-//         {//directional light 2
-//              glm::vec4(1.f),//color;
-//              glm::vec4(1, -1.8, -2, 0), //dir //only for directional light
-//              glm::vec4(0),//pos; //only for point light and spot light
-//              0,//lightType; //0 is directional, 1 is point, 2 is for spot
-//              glm::vec3(0),//attenuation;
-//              0,//angle; //only for spot lights
-//              0//penumbra;
-//         }
+         { //point light
+             glm::vec4(1.f),//color;
+             glm::vec4(0.f), //dir //only for directional light
+             glm::vec4(10, 10, 10, 1.f),//pos; //only for point light and spot light
+             1,//lightType; //0 is directional, 1 is point, 2 is for spot
+             glm::vec3(1.5, 0, 0),//attenuation;
+             0,//angle; //only for spot lights
+             0//penumbra;
+         },
+         {//directional light 1
+              glm::vec4(1.f),//color;
+              glm::vec4(0.25, 1, -1, 0), //dir //only for directional light
+              glm::vec4(0),//pos; //only for point light and spot light
+              0,//lightType; //0 is directional, 1 is point, 2 is for spot
+              glm::vec3(0),//attenuation;
+              0,//angle; //only for spot lights
+              0//penumbra;
+         },
+         {//directional light 2
+              glm::vec4(1.f),//color;
+              glm::vec4(1, -1.8, -2, 0), //dir //only for directional light
+              glm::vec4(0),//pos; //only for point light and spot light
+              0,//lightType; //0 is directional, 1 is point, 2 is for spot
+              glm::vec3(0),//attenuation;
+              0,//angle; //only for spot lights
+              0//penumbra;
+         }
      };
 
 //made up shapes to test raytracing
@@ -169,18 +169,35 @@ private:
         float shininess;
         glm::vec4 cReflective;
     };
-    //from unit sphere
-    ShapeData shapes[1] = {
-        {
-            glm::mat4( 1.0f ),//glm::mat4 ctm;
-            0,//int type; //0 is sphere
-            glm::vec4(0.f),//glm::vec4 cAmbient;
-            glm::vec4(1,0,0, 1),//glm::vec4 cDiffuse;
-            glm::vec4(1.f),//glm::vec4 cSpecular;
-            25,//float shininess;
-            glm::vec4(0.75, 1, 0.75, 1)//glm::vec4 cReflective;
-        }
+    struct TriangleData {
+        glm::vec3 points[3];
+        glm::vec3 normals[3];
+        glm::vec4 cAmbient;
+        glm::vec4 cDiffuse;
+        glm::vec4 cSpecular;
+        float shininess;
+        glm::vec4 cReflective;
     };
-    int numShapes = 1;
+    //FAKE BASIC TRIANGLE INFO
+    TriangleData triangle1 = {
+        {glm::vec3(-0.5, -0.5, 0), glm::vec3(0, 0.5, 0), glm::vec3(0.5, -0.5, 0)}, //points
+        {glm::vec3(0,0,1),glm::vec3(0,0,1),glm::vec3(0,0,1)},//normals
+        glm::vec4(0.1f),//glm::vec4 cAmbient;
+        glm::vec4(1,0,0, 1.f),//glm::vec4 cDiffuse;
+        glm::vec4(1.f),//glm::vec4 cSpecular;
+        25,//float shininess;
+        glm::vec4(0.75, 1, 0.75, 1)
+    };
+    TriangleData triangle2 = {
+        {glm::vec3(-1.5, -0.5, 0), glm::vec3(-1, 0.5, 0), glm::vec3(-0.5, -0.5, 0)}, //points
+        {glm::vec3(0,0,1),glm::vec3(0,0,1),glm::vec3(0,0,1)},//normals
+        glm::vec4(0.1f),//glm::vec4 cAmbient;
+        glm::vec4(1,0,0, 1.f),//glm::vec4 cDiffuse;
+        glm::vec4(1.f),//glm::vec4 cSpecular;
+        25,//float shininess;
+        glm::vec4(0.75, 1, 0.75, 1)
+    };
+    TriangleData triangles[2] = {triangle1, triangle2};
+
     void paintGeometryPhong();
 };
