@@ -182,6 +182,8 @@ void GLWidget::rebuildMatrices() {
     float camZ = cos(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
 
 
+    std::cout << m_elapsedTimer.elapsed() << " TIMER" << std::endl;
+
     if(8.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 8.05f){
         std::cout<<"it's time"<<std::endl;
         //GLWidget::resetHeightMap();
@@ -189,7 +191,7 @@ void GLWidget::rebuildMatrices() {
 
     }
 
-    if(16.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 16.05f){
+    if (16.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 16.05f){
         std::cout<<"it's time"<<std::endl;
         //GLWidget::resetHeightMap();
         GLWidget::useNewImage("resources/helen (1).jpg");
