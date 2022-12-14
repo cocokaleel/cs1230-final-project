@@ -182,21 +182,21 @@ void GLWidget::rebuildMatrices() {
     float camZ = cos(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
 
 
-    std::cout << m_elapsedTimer.elapsed() << " TIMER" << std::endl;
+//    std::cout << m_elapsedTimer.elapsed() << " TIMER" << std::endl;
 
-    if(8.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 8.05f){
-        std::cout<<"it's time"<<std::endl;
-        //GLWidget::resetHeightMap();
-        GLWidget::useNewImage("resources/zack.png");
+//    if(8.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 8.05f){
+//        std::cout<<"it's time"<<std::endl;
+//        //GLWidget::resetHeightMap();
+//        GLWidget::useNewImage("resources/zack.png");
 
-    }
+//    }
 
-    if (16.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 16.05f){
-        std::cout<<"it's time"<<std::endl;
-        //GLWidget::resetHeightMap();
-        GLWidget::useNewImage("resources/helen (1).jpg");
+//    if (16.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 16.05f){
+//        std::cout<<"it's time"<<std::endl;
+//        //GLWidget::resetHeightMap();
+//        GLWidget::useNewImage("resources/helen (1).jpg");
 
-    }
+//    }
 
     m_camera.lookAt(QVector3D(camX, 0.f, camZ), QVector3D(0,0,0), QVector3D(0,-1,0));
 
@@ -206,5 +206,178 @@ void GLWidget::rebuildMatrices() {
     m_proj.setToIdentity();
     m_proj.perspective(45.0f, 1.0 * width() / height(), 0.01f, 100.0f);
 
+    update();
+}
+
+
+void GLWidget::timerEvent(QTimerEvent *event){
+    if(isAnimate){
+        GLWidget::spinInCircle();
+    }
+}
+
+void GLWidget::spinInCircle(){
+    m_camera.setToIdentity();
+
+    QMatrix4x4 rot;
+    rot.setToIdentity();
+    rot.rotate(-10 * m_angleX,QVector3D(0,0,1));
+
+    QVector3D eye = QVector3D(1,1,1);
+    eye = rot.map(eye);
+
+    rot.setToIdentity();
+    rot.rotate(-10 * m_angleY,QVector3D::crossProduct(QVector3D(0,0,1),eye));
+
+    eye = rot.map(eye);
+    eye = eye * m_zoom;
+
+//    std::cout << m_elapsedTimer.elapsed() << " ELAPSED" << std::endl;
+//    float timer = m_elapsedTimer.elapsed() * 0.001f;
+
+//    eye += (QVector3D(timer, timer, timer));
+
+//    m_camera.lookAt(eye, QVector3D(0,0,0), QVector3D(0,0,1));
+
+    // NEW
+    float camX = sin(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
+    float camY = sin(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
+    float camZ = cos(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
+
+//    std::cout << m_elapsedTimer.elapsed() * 0.001f << std::endl;
+
+    if (5.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 5.05f) {
+        std::cout << "NO HITZY" << std::endl;
+
+    }
+
+//    QVector4D aespa = m_camera.column(3);
+//    std::cout << eye.x() << " " << eye.y() << " " << eye.z() << " ASSPA" << std::endl;
+
+//    if (aespa.x() == 0 || aespa.z() == 0) {
+//        std::cout << "SHITZY" << std::endl;
+//    }
+
+//    while (true) {
+        std::cout << "ASSPA" << std::endl;
+        m_camera.lookAt(QVector3D(camX, camY, camZ), QVector3D(0,0,0), QVector3D(0,-1,0));
+//    }
+
+        if (0.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < .05f) {
+            GLWidget::useNewImage("resources/staff/class_1.jpg");
+
+        }
+
+        if(3.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 3.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/daniel.png");
+
+        }
+
+        if (6.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 6.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/zack.png");
+
+        }
+        if (9.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 9.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/logan.png");
+
+        }
+
+        if (12.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 12.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/adrian.png");
+
+        }
+
+        if (15.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 15.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/anna.png");
+
+        }
+
+        if (18.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 18.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/derick.png");
+
+        }
+
+        if (21.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 21.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/helen.png");
+
+        }
+
+        if (24.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 24.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/jianxin.png");
+
+        }
+
+        if (27.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 27.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/marc.png");
+
+        }
+
+        if (30.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 30.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/mehek.png");
+
+        }
+
+        if (33.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 33.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/nick.png");
+
+        }
+
+        if (36.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 36.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/sean.png");
+
+        }
+        if (39.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 39.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/yiwen.png");
+
+        }
+        if (42.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 42.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/angela.png");
+
+        }
+        if (45.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 45.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/geoffrey.png");
+
+        }
+        if (48.f < (m_elapsedTimer.elapsed() * 0.001f) && (m_elapsedTimer.elapsed() * 0.001f) < 48.05f){
+            std::cout<<"it's time"<<std::endl;
+            //GLWidget::resetHeightMap();
+            GLWidget::useNewImage("resources/staff/ziang.png");
+
+        }
+
+    m_proj.setToIdentity();
+    m_proj.perspective(45.0f, 1.0 * width() / height(), 0.01f, 100.0f);
+
+//    itzy += 0.01f;
     update();
 }

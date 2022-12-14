@@ -31,6 +31,8 @@ public:
 
     void tick(QTimerEvent* event);
 
+    bool isAnimate = true;
+
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -38,6 +40,9 @@ protected:
     void mousePressEvent(QMouseEvent *e) override;
     void mouseMoveEvent(QMouseEvent *e) override;
     void wheelEvent(QWheelEvent *e) override;
+
+
+    void timerEvent(QTimerEvent *event) override;
 
 private:
     void rebuildMatrices();
@@ -68,5 +73,8 @@ private:
     float m_angleX;
     float m_angleY;
     float m_zoom;
+
+    void spinInCircle();
+
 
 };

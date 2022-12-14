@@ -284,15 +284,7 @@ glm::vec3 TerrainGenerator::getColor(glm::vec3 normal, glm::vec3 position) {
 //        return glm::vec3(.5,.5,.5);
 //    }
 
-    if (glm::dot(normal, position) < .0001){
-         return glm::vec3(.5,.2,0.f);
-    }
-    else if(position.z > .2f){
-        return glm::vec3(.5,.2,1);
-    }
-    else {
         return glm::vec3(.5,.5,.5);
-    }
 
     // Return white as placeholder
     //return glm::vec3(1,1,1);
