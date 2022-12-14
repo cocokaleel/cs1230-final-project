@@ -74,4 +74,89 @@ private:
     float m_angleY;
     float m_zoom;
 
+    //UNIFORMS FOR PHONG AND RAYTRACING
+    //TODO PUT THESE IN A SEPARATE FILE??
+    //GLOBAL SCENE DATA: SHAPES, LIGHTS, AND CONSTANTS
+    // Camera info
+//    uniform mat4 viewMatrix;
+//    uniform mat4 viewMatrixInverse;
+//    uniform mat4 projectionMatrix;
+
+//    uniform vec4 cameraPositionWorld;
+     float heightAngle = 30 * M_PI / 180.f;;
+//    uniform float widthAngle;
+
+    //uniform lighting values ripped from recursiveSpheres3.xml
+    // Global lighting uniforms
+     float ka = 0.5; //ambient coefficient
+     float kd = 0.7; //diffuse coefficient
+     float ks = 0.54; //specular coefficient
+
+     // holds the number of lights that exist in the scene (for looping purposes)
+     int numLights = 3;
+
+     //create a struct for holding light information
+     struct LightColorPos {
+         glm::vec4 color;
+         glm::vec4 dir; //only for directional light
+         glm::vec4 pos; //only for point light and spot light
+         int lightType; //0 is directional, 1 is point, 2 is for spot
+         glm::vec3 attenuation;
+         float angle; //only for spot lights
+         float penumbra; //only for spot lights
+     };
+
+     LightColorPos lights[3] = {
+         { //point light
+             glm::vec4(1.f),//color;
+             glm::vec4(0.f), //dir //only for directional light
+             glm::vec4(10, 10, 10, 1.f),//pos; //only for point light and spot light
+             1,//lightType; //0 is directional, 1 is point, 2 is for spot
+             glm::vec3(1.5, 0, 0),//attenuation;
+             0,//angle; //only for spot lights
+             0//penumbra;
+         },
+         {//directional light 1
+              glm::vec4(1.f),//color;
+              glm::vec4(0.25, 1, -1, 0), //dir //only for directional light
+              glm::vec4(0),//pos; //only for point light and spot light
+              0,//lightType; //0 is directional, 1 is point, 2 is for spot
+              glm::vec3(0),//attenuation;
+              0,//angle; //only for spot lights
+              0//penumbra;
+         },
+         {//directional light 2
+              glm::vec4(1.f),//color;
+              glm::vec4(1, -1.8, -2, 0), //dir //only for directional light
+              glm::vec4(0),//pos; //only for point light and spot light
+              0,//lightType; //0 is directional, 1 is point, 2 is for spot
+              glm::vec3(0),//attenuation;
+              0,//angle; //only for spot lights
+              0//penumbra;
+         }
+     };
+
+//    //create a uniform input for the light data
+//    // INSPO FOR SHAPE STRUCT
+    struct ShapeData {
+        glm::mat4 ctm;
+        int type; //0 is sphere
+        glm::vec4 cAmbient;
+        glm::vec4 cDiffuse;
+        glm::vec4 cSpecular;
+        float shininess;
+        glm::vec4 cReflective;
+    };
+    ShapeData shapes[1] = {
+        {
+            glm::mat4( 1.0f ),//glm::mat4 ctm;
+            0,//int type; //0 is sphere
+            glm::vec4(0.f),//glm::vec4 cAmbient;
+            glm::vec4(0.75, 1, 0.75, 1),//glm::vec4 cDiffuse;
+            glm::vec4(1.f),//glm::vec4 cSpecular;
+            25,//float shininess;
+            glm::vec4(0.75, 1, 0.75, 1)//glm::vec4 cReflective;
+        }
+    };
+    int numShapes = 1;
 };

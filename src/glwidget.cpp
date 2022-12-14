@@ -46,16 +46,12 @@ void GLWidget::initializeGL()
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
-//    glEnableVertexAttribArray(2);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),
                              nullptr);
 
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),
                              reinterpret_cast<void *>(3 * sizeof(GLfloat)));
-
-//    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat),
-//                             reinterpret_cast<void *>(6 * sizeof(GLfloat)));
 
     m_fullscreenQuadVbo.release();
 
