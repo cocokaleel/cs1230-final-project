@@ -77,7 +77,7 @@ struct TriangleData {
     float shininess;
     vec4 cReflective;
 };
-uniform TriangleData triangles[2];
+uniform TriangleData triangles[50];
 uniform int numTriangles;
 
 
@@ -193,7 +193,7 @@ IntersectionResult traceRay(Ray rayWorldSpace) {
         float d = -dot(planeNormal,triangles[i].points[0]); //d is a parameter of the parametric definition of a plane
         float t_i = -(dot(planeNormal, vec3(rayWorldSpace.startPosition))+d)/angleNormalAndDirection;
 
-        if (t_i < 0) continue; //if the intersection is behind
+        if (t_i < 0 || t_i > t) continue; //if the intersection is behind
 
         //check if point of intersection is between vertices
 
@@ -218,6 +218,7 @@ IntersectionResult traceRay(Ray rayWorldSpace) {
 
         //now that the point has passed all the tests, it should in theory be in the triangle
         if (dot(planeNormal, cross0)>=0 && dot(planeNormal, cross1)>=0 && dot(planeNormal, cross2)>=0) {
+            t = t_i;
             triangleIndex = i;
             intersectionWorld = vec4(intersectionPoint, 1.f);
             normalWorld = vec4(planeNormal, 0.f);

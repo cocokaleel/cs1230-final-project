@@ -130,10 +130,19 @@ private:
              0,//angle; //only for spot lights
              0//penumbra;
          },
+//         { //point light
+//             glm::vec4(1.f),//color;
+//             glm::vec4(0.f), //dir //only for directional light
+//             glm::vec4(10, 10, 10, 1.f),//pos; //only for point light and spot light
+//             1,//lightType; //0 is directional, 1 is point, 2 is for spot
+//             glm::vec3(1.5, 0, 0),//attenuation;
+//             0,//angle; //only for spot lights
+//             0//penumbra;
+//         },
          { //point light
              glm::vec4(1.f),//color;
              glm::vec4(0.f), //dir //only for directional light
-             glm::vec4(10, 10, 10, 1.f),//pos; //only for point light and spot light
+             glm::vec4(1, 10, -10, 1.f),//pos; //only for point light and spot light
              1,//lightType; //0 is directional, 1 is point, 2 is for spot
              glm::vec3(1.5, 0, 0),//attenuation;
              0,//angle; //only for spot lights
@@ -180,24 +189,44 @@ private:
     };
     //FAKE BASIC TRIANGLE INFO
     TriangleData triangle1 = {
-        {glm::vec3(-0.5, -0.5, 0), glm::vec3(0, 0.5, 0), glm::vec3(0.5, -0.5, 0)}, //points
+        {glm::vec3(-0.5, -0.5, 1), glm::vec3(-0.5, 0.5, 0.5), glm::vec3(-0.5, -0.5, 0)}, //points
         {glm::vec3(0,0,1),glm::vec3(0,0,1),glm::vec3(0,0,1)},//normals
         glm::vec4(0.1f),//glm::vec4 cAmbient;
-        glm::vec4(1,0,0, 1.f),//glm::vec4 cDiffuse;
+        glm::vec4(0.9,0.1,0.1, 1.f),//glm::vec4 cDiffuse;
         glm::vec4(1.f),//glm::vec4 cSpecular;
         25,//float shininess;
         glm::vec4(0.75, 1, 0.75, 1)
     };
     TriangleData triangle2 = {
-        {glm::vec3(-1.5, -0.5, 0), glm::vec3(-1, 0.5, 0), glm::vec3(-0.5, -0.5, 0)}, //points
+        {glm::vec3(-0.5, -0.5, 0), glm::vec3(0, 0, 0), glm::vec3(0.5, -0.5, 0)}, //points
         {glm::vec3(0,0,1),glm::vec3(0,0,1),glm::vec3(0,0,1)},//normals
         glm::vec4(0.1f),//glm::vec4 cAmbient;
-        glm::vec4(1,0,0, 1.f),//glm::vec4 cDiffuse;
+        glm::vec4(0.1,0.9,0.1, 1.f),//glm::vec4 cDiffuse;
         glm::vec4(1.f),//glm::vec4 cSpecular;
         25,//float shininess;
         glm::vec4(0.75, 1, 0.75, 1)
     };
-    TriangleData triangles[2] = {triangle1, triangle2};
+    TriangleData triangle3 = {
+        {glm::vec3(0.5, -0.5, 0), glm::vec3(1, 0.5, 0), glm::vec3(1.5, -0.5, 0)}, //points
+        {glm::vec3(0,0,1),glm::vec3(0,0,1),glm::vec3(0,0,1)},//normals
+        glm::vec4(0.1f),//glm::vec4 cAmbient;
+        glm::vec4(0.1,0.1,0.9f, 1.f),//glm::vec4 cDiffuse;
+        glm::vec4(1.f),//glm::vec4 cSpecular;
+        25,//float shininess;
+        glm::vec4(0.75, 1, 0.75, 1)
+    };
+
+    TriangleData triangle4 = {
+        {glm::vec3(-0.5, -0.5, -1), glm::vec3(0, 0.5, -1), glm::vec3(0.5, -0.5, -1)}, //points
+        {glm::vec3(0,0,1),glm::vec3(0,0,1),glm::vec3(0,0,1)},//normals
+        glm::vec4(0.1f),//glm::vec4 cAmbient;
+        glm::vec4(0.1,0.9,0.1, 1.f),//glm::vec4 cDiffuse;
+        glm::vec4(1.f),//glm::vec4 cSpecular;
+        25,//float shininess;
+        glm::vec4(0.75, 1, 0.75, 1)
+    };
+    TriangleData triangles[4] = {triangle1, triangle2, triangle3, triangle4};
+    std::vector<TriangleData> vertTriangles;
 
     void paintGeometryPhong();
 };

@@ -98,10 +98,10 @@ std::vector<float>  TerrainGenerator::newHeightMap(std::vector<RGBA> newHeightMa
 
     //how to access in reverse lol
     for(RGBA& color: newHeightMapInfo){
-//        std::cout<< (color.r / 255.f)<< std::endl;
-        if (!((color.r/255.f) >= 0.392156 && (color.r/255.f) <= 0.392158)) {
-            std::cout << "found a different height" << std::endl;
-        }
+        std::cout<< (color.r / 255.f)<< std::endl;
+//        if (!((color.r/255.f) >= 0.392156 && (color.r/255.f) <= 0.392158)) {
+//            std::cout << "found a different height" << std::endl;
+//        }
         heightInfo.push_back(color.r / 255.f);//check here if incorrect height
     }
     std::cout << "done pushing color info" << std::endl;
@@ -114,6 +114,8 @@ std::vector<float>  TerrainGenerator::newHeightMap(std::vector<RGBA> newHeightMa
     isResetTerrain = false;
 
     TerrainGenerator::addToVerts();
+
+
 
     return verts;
 }
