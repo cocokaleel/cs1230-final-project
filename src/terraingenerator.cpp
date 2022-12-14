@@ -33,8 +33,15 @@ void addPointToVector(glm::vec3 point, std::vector<float>& vector) {
 
 //add points and normals and colors to verts
 void TerrainGenerator::addToVerts(){
+
+    //use a new vector and then add that vector to a vector of 20,0000
+
     for(int x = 0; x < m_resolution - 1; x++) {
         for(int y = 0; y < m_resolution - 1; y++) {
+            triangle_1.clear();
+            triangle_2.clear();
+
+
             int x1 = x;
             int y1 = y;
 
@@ -55,33 +62,41 @@ void TerrainGenerator::addToVerts(){
             // x1y1z1
             // x2y1z2
             // x2y2z3
-            addPointToVector(p1, verts);
-            addPointToVector(n1, verts);
-            addPointToVector(getColor(n1, p1), verts);
+            addPointToVector(p1, triangle_1);
+            addPointToVector(n1, triangle_1);
+            addPointToVector(getColor(n1, p1), triangle_1);
 
-            addPointToVector(p2, verts);
-            addPointToVector(n2, verts);
-            addPointToVector(getColor(n2, p2), verts);
+            addPointToVector(p2, triangle_1);
+            addPointToVector(n2, triangle_1);
+            addPointToVector(getColor(n2, p2), triangle_1);
 
-            addPointToVector(p3, verts);
-            addPointToVector(n3, verts);
-            addPointToVector(getColor(n3, p3), verts);
+            addPointToVector(p3, triangle_1);
+            addPointToVector(n3, triangle_1);
+            addPointToVector(getColor(n3, p3), triangle_1);
 
             // tris 2
             // x1y1z1
             // x2y2z3
             // x1y2z4
-            addPointToVector(p1, verts);
-            addPointToVector(n1, verts);
-            addPointToVector(getColor(n1, p1), verts);
+            addPointToVector(p1, triangle_2);
+            addPointToVector(n1, triangle_2);
+            addPointToVector(getColor(n1, p1), triangle_2);
 
-            addPointToVector(p3, verts);
-            addPointToVector(n3, verts);
-            addPointToVector(getColor(n3, p3), verts);
+            addPointToVector(p3, triangle_2);
+            addPointToVector(n3, triangle_2);
+            addPointToVector(getColor(n3, p3), triangle_2);
 
-            addPointToVector(p4, verts);
-            addPointToVector(n4, verts);
-            addPointToVector(getColor(n4, p4), verts);
+            addPointToVector(p4, triangle_2);
+            addPointToVector(n4, triangle_2);
+            addPointToVector(getColor(n4, p4), triangle_2);
+
+            triangleData2DArray.push_back(triangle_1);
+            triangleData2DArray.push_back(triangle_2);
+
+
+            triangle_1.clear();
+            triangle_2.clear();
+
         }
     }
 
@@ -91,12 +106,14 @@ void TerrainGenerator::addToVerts(){
 
 //helper to set vertex array
 //Pass in scaled down image
-std::vector<float>  TerrainGenerator::newHeightMap(std::vector<RGBA> newHeightMapInfo){
+std::vector<std::vector<float>>  TerrainGenerator::newHeightMap(std::vector<RGBA> newHeightMapInfo){
     //clear current vertex...
     verts.clear();
     heightInfo.clear();
 
-    //how to access in reverse lol
+    triangleData2DArray.clear();
+    triangleData2DArray.reserve(20000);
+
     for(RGBA& color: newHeightMapInfo){
         std::cout<< (color.r / 255.f)<< std::endl;
 //        if (!((color.r/255.f) >= 0.392156 && (color.r/255.f) <= 0.392158)) {
@@ -115,30 +132,45 @@ std::vector<float>  TerrainGenerator::newHeightMap(std::vector<RGBA> newHeightMa
 
     TerrainGenerator::addToVerts();
 
-
-
-    return verts;
+    return triangleData2DArray;
 }
 
-std::vector<float> TerrainGenerator::clearHeightMap(){
+
+
+
+
+
+
+
+
+std::vector<std::vector<float>> TerrainGenerator::clearHeightMap(){
     verts.clear();
+
+    triangleData2DArray.clear();
+    triangleData2DArray.reserve(20000);
+
     isResetTerrain = true;
 
     TerrainGenerator::addToVerts();
 
-    return verts;
+    return triangleData2DArray;
 }
 
 
 
 // Generates the geometry of the output triangle mesh
-std::vector<float> TerrainGenerator::generateTerrain() {
+std::vector<std::vector<float>> TerrainGenerator::generateTerrain() {
+
+    triangleData2DArray.clear();
+    triangleData2DArray.reserve(20000);
+
     isResetTerrain = true;
 
     verts.reserve(m_resolution * m_resolution * 6);
+
     TerrainGenerator::addToVerts();
 
-    return verts;
+    return triangleData2DArray;
 }
 
 
@@ -250,15 +282,15 @@ glm::vec3 TerrainGenerator::getColor(glm::vec3 normal, glm::vec3 position) {
 //        return glm::vec3(.5,.5,.5);
 //    }
 
-    if (glm::dot(normal, position) < .0001){
-         return glm::vec3(.5,.2,0.f);
-    }
-    else if(position.z > .2f){
-        return glm::vec3(.5,.2,1);
-    }
-    else {
+//    if (glm::dot(normal, position) < .0001){
+//         return glm::vec3(.5,.2,0.f);
+//    }
+//    else if(position.z > .2f){
+//        return glm::vec3(.5,.2,1);
+//    }
+//    else {
         return glm::vec3(.5,.5,.5);
-    }
+//    }
 
     // Return white as placeholder
     //return glm::vec3(1,1,1);

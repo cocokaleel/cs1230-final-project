@@ -22,11 +22,11 @@ public:
     TerrainGenerator();
     ~TerrainGenerator();
     int getResolution() { return m_resolution; };
-    std::vector<float> generateTerrain();
+    std::vector<std::vector<float>> generateTerrain();
 
-    std::vector<float> newHeightMap(std::vector<RGBA> newHeightMapInfo);
+    std::vector<std::vector<float>> newHeightMap(std::vector<RGBA> newHeightMapInfo);
 
-    std::vector<float> clearHeightMap();
+    std::vector<std::vector<float>> clearHeightMap();
 
 private:
 
@@ -68,6 +68,11 @@ private:
 
     void loadImageFromFile(const std::string &file);
     void addToVerts();
+
+    std::vector<std::vector<float>> triangleData2DArray;
+    std::vector<float> triangle_1;
+    std::vector<float> triangle_2;
+
 
 
 };

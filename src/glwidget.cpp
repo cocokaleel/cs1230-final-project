@@ -79,42 +79,45 @@ void GLWidget::resetHeightMap(){
 
 void GLWidget::useNewHeightMap(std::vector<RGBA> canvasData){
     verts = m_terrain.newHeightMap(canvasData);
-    for (int i = 0; i < verts.size(); i+=27) {
-        //verts is triangle: (position, normal, color) for each point
-        struct TriangleData {
-            glm::vec3 points[3];
-            glm::vec3 normals[3];
-            glm::vec4 cAmbient;
-            glm::vec4 cDiffuse;
-            glm::vec4 cSpecular;
-            float shininess;
-            glm::vec4 cReflective;
-        };
-        glm::vec3 p1 = glm::vec3(verts[i], verts[i+1], verts[i+2]);
-        glm::vec3 n1 = glm::vec3(verts[i+3], verts[i+4], verts[i+5]);
-        glm::vec2 c1 = glm::vec3(verts[i+6], verts[i+7], verts[i+8]);
 
-        glm::vec3 p2 = glm::vec3(verts[i+9], verts[i+10], verts[i+11]);
-        glm::vec3 n2 = glm::vec3(verts[i+12], verts[i+13], verts[i+14]);
-        glm::vec2 c2 = glm::vec3(verts[i+15], verts[i+16], verts[i+17]);
 
-        glm::vec3 p3 = glm::vec3(verts[i+18], verts[i+19], verts[i+20]);
-        glm::vec3 n3 = glm::vec3(verts[i+21], verts[i+22], verts[i+23]);
-        glm::vec2 c3 = glm::vec3(verts[i+24], verts[i+25], verts[i+26]);
 
-        GLWidget::TriangleData newTriangle = {
-            {p1,p2,p3},//points
-            {n1,n2,n3},//normals
-            //basic color can change
-            glm::vec4(0.1f),//glm::vec4 cAmbient;
-            glm::vec4(0.9,0.1,0.1, 1.f),//glm::vec4 cDiffuse;
-            glm::vec4(1.f),//glm::vec4 cSpecular;
-            25,//float shininess;
-            glm::vec4(0.75, 1, 0.75, 1)
-        };
+//    for (int i = 0; i < verts.size(); i+=27) {
+//        //verts is triangle: (position, normal, color) for each point
+//        struct TriangleData {
+//            glm::vec3 points[3];
+//            glm::vec3 normals[3];
+//            glm::vec4 cAmbient;
+//            glm::vec4 cDiffuse;
+//            glm::vec4 cSpecular;
+//            float shininess;
+//            glm::vec4 cReflective;
+//        };
+//        glm::vec3 p1 = glm::vec3(verts[i], verts[i+1], verts[i+2]);
+//        glm::vec3 n1 = glm::vec3(verts[i+3], verts[i+4], verts[i+5]);
+//        glm::vec2 c1 = glm::vec3(verts[i+6], verts[i+7], verts[i+8]);
 
-        vertTriangles.push_back(newTriangle);
-    }
+//        glm::vec3 p2 = glm::vec3(verts[i+9], verts[i+10], verts[i+11]);
+//        glm::vec3 n2 = glm::vec3(verts[i+12], verts[i+13], verts[i+14]);
+//        glm::vec2 c2 = glm::vec3(verts[i+15], verts[i+16], verts[i+17]);
+
+//        glm::vec3 p3 = glm::vec3(verts[i+18], verts[i+19], verts[i+20]);
+//        glm::vec3 n3 = glm::vec3(verts[i+21], verts[i+22], verts[i+23]);
+//        glm::vec2 c3 = glm::vec3(verts[i+24], verts[i+25], verts[i+26]);
+
+//        GLWidget::TriangleData newTriangle = {
+//            {p1,p2,p3},//points
+//            {n1,n2,n3},//normals
+//            //basic color can change
+//            glm::vec4(0.1f),//glm::vec4 cAmbient;
+//            glm::vec4(0.9,0.1,0.1, 1.f),//glm::vec4 cDiffuse;
+//            glm::vec4(1.f),//glm::vec4 cSpecular;
+//            25,//float shininess;
+//            glm::vec4(0.75, 1, 0.75, 1)
+//        };
+
+//        vertTriangles.push_back(newTriangle);
+//    }
     update();
 }
 

@@ -33,7 +33,7 @@ private:
     //void resetVBO(QOpenGLBuffer& vbo, std::vector<GLfloat>vertexData);
 
 
-    std::vector<GLfloat> verts;
+    std::vector<std::vector<float>> verts;
     std::vector<GLfloat> fullscreen_quad_verts =
         { //     POSITIONS    //
             -1.f,  1.f, 0.0f, //position
