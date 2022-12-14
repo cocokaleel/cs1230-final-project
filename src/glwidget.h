@@ -41,7 +41,7 @@ public:
 
     float itzy = 0.f;
     bool m_mouseDown = false;
-    bool isAnimate = false;
+    bool isAnimate = true;
 
 protected:
     void initializeGL() override;
