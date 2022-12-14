@@ -56,9 +56,7 @@ private:
     int m_zRot = 0;
 
     QOpenGLShaderProgram *m_program = nullptr;
-//    QOpenGLVertexArrayObject m_terrainVao;
     QOpenGLVertexArrayObject m_fullscreenQuadVao;
-//    QOpenGLBuffer m_terrainVbo;
     QOpenGLBuffer m_fullscreenQuadVbo;
 
     QMatrix4x4 m_proj;
@@ -78,13 +76,10 @@ private:
     //TODO PUT THESE IN A SEPARATE FILE??
     //GLOBAL SCENE DATA: SHAPES, LIGHTS, AND CONSTANTS
     // Camera info
-//    uniform mat4 viewMatrix;
-//    uniform mat4 viewMatrixInverse;
-//    uniform mat4 projectionMatrix;
+    glm::mat4 viewMatrix;
 
-//    uniform vec4 cameraPositionWorld;
-     float heightAngle = 30 * M_PI / 180.f;;
-//    uniform float widthAngle;
+    glm::vec4 cameraPositionWorld;
+    float heightAngle = 30 * M_PI / 180.f;
 
     //uniform lighting values ripped from recursiveSpheres3.xml
     // Global lighting uniforms
@@ -136,8 +131,7 @@ private:
          }
      };
 
-//    //create a uniform input for the light data
-//    // INSPO FOR SHAPE STRUCT
+//made up shapes to test raytracing
     struct ShapeData {
         glm::mat4 ctm;
         int type; //0 is sphere
@@ -159,4 +153,5 @@ private:
         }
     };
     int numShapes = 1;
+    void paintGeometryPhong();
 };
