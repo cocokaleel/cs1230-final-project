@@ -32,8 +32,7 @@ private:
     void rebuildMatrices();
     //void resetVBO(QOpenGLBuffer& vbo, std::vector<GLfloat>vertexData);
 
-
-    std::vector<std::vector<float>> verts;
+    std::vector<glm::vec3> verts;
     std::vector<GLfloat> fullscreen_quad_verts =
         { //     POSITIONS    //
             -1.f,  1.f, 0.0f, //position
@@ -64,6 +63,7 @@ private:
     QMatrix4x4 m_world;
     TerrainGenerator m_terrain;
 
+    GLuint m_meshTexture = 0;
     int m_projMatrixLoc = 0;
     int m_mvMatrixLoc = 0;
 

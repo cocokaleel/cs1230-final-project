@@ -10,23 +10,17 @@
 class TerrainGenerator
 {
 
-
-
-
-
-
-
 public:
     bool m_wireshade;
 
     TerrainGenerator();
     ~TerrainGenerator();
     int getResolution() { return m_resolution; };
-    std::vector<std::vector<float>> generateTerrain();
+    std::vector<glm::vec3> generateTerrain(std::vector<glm::vec3>& vertsArray);
 
-    std::vector<std::vector<float>> newHeightMap(std::vector<RGBA> newHeightMapInfo);
+    std::vector<glm::vec3> newHeightMap(std::vector<RGBA> newHeightMapInfo, std::vector<glm::vec3>& vertsArray);
 
-    std::vector<std::vector<float>> clearHeightMap();
+    std::vector<glm::vec3> clearHeightMap(std::vector<glm::vec3>& vertsArray);
 
 private:
 
@@ -67,12 +61,11 @@ private:
 
 
     void loadImageFromFile(const std::string &file);
-    void addToVerts();
+    void addToVerts(std::vector<glm::vec3>& vertsArray);
 
-    std::vector<std::vector<float>> triangleData2DArray;
+//    std::vector<std::vector<float>> triangleData2DArray;
     std::vector<float> triangle_1;
     std::vector<float> triangle_2;
-
-
+//    std::vector<std::vector<float>> triangleData2DArray;
 
 };

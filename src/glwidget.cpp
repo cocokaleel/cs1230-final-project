@@ -38,7 +38,8 @@ void GLWidget::initializeGL()
     m_fullscreenQuadVao.create();
     m_fullscreenQuadVao.bind();
 
-    verts = m_terrain.generateTerrain();
+    m_terrain.generateTerrain(verts);
+    std::cout << "printing verts " << verts[0][0] << std::endl;
     m_fullscreenQuadVbo.create();
     m_fullscreenQuadVbo.bind();
     m_fullscreenQuadVbo.allocate(fullscreen_quad_verts.data(),fullscreen_quad_verts.size()*sizeof(GLfloat));
@@ -52,6 +53,18 @@ void GLWidget::initializeGL()
 
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),
                              reinterpret_cast<void *>(3 * sizeof(GLfloat)));
+
+    //create the mesh texture index
+    glGenTextures(1, &m_meshTexture);
+    glActiveTexture(0);
+    glBindTexture(GL_TEXTURE_1D, m_meshTexture);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); //necessary??
+    glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB16F, verts.size(), 0, GL_RGB, GL_FLOAT, &verts[0]);
+    glBindTexture(GL_TEXTURE_1D, 0);
+
+    //tell the sampler that the mesh info is at texture_sampler active slot 0
+    int textureLoc = m_program->uniformLocation("triangle_sampler");
+    glUniform1i(textureLoc, 0);
 
     m_fullscreenQuadVbo.release();
 
@@ -73,13 +86,18 @@ void GLWidget::initializeGL()
 
 //reset vertex map//should change the value for future too???
 void GLWidget::resetHeightMap(){
-    verts = m_terrain.clearHeightMap();
+    m_terrain.clearHeightMap(verts);
     update();
 };
 
 void GLWidget::useNewHeightMap(std::vector<RGBA> canvasData){
-    verts = m_terrain.newHeightMap(canvasData);
+    m_terrain.newHeightMap(canvasData, verts);
 
+    glActiveTexture(0);
+    glBindTexture(GL_TEXTURE_1D, m_meshTexture);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); //necessary??
+    glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB16F, verts.size(), 0, GL_RGB, GL_FLOAT, &verts[0]);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
 
 //    for (int i = 0; i < verts.size(); i+=27) {
@@ -135,11 +153,18 @@ void GLWidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
+
+
     m_program->bind();
+//    glActiveTexture(0);
+    glBindTexture(GL_TEXTURE_2D, m_meshTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, 99*99*2, 27, 0, GL_RED, GL_UNSIGNED_BYTE, &verts);//load nothing in
+    std::cout << " 2000,0 "<< verts[2000][0] << std::endl;
     paintGeometryPhong();
 
 //    glPolygonMode(GL_FRONT_AND_BACK,m_terrain.m_wireshade? GL_LINE : GL_FILL);
     glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindTexture(GL_TEXTURE_2D, 0);//unbind
 
     m_program->release();
 }

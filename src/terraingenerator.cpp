@@ -25,14 +25,14 @@ TerrainGenerator::~TerrainGenerator()
 }
 
 // Helper for generateTerrain()
-void addPointToVector(glm::vec3 point, std::vector<float>& vector) {
-    vector.push_back(point.x);
-    vector.push_back(point.y);
-    vector.push_back(point.z);
+void addPointToVector(glm::vec3 point, std::vector<glm::vec3>& vector) {
+    vector.push_back(point);
+//    vector.push_back(point.y);
+//    vector.push_back(point.z);
 }
 
 //add points and normals and colors to verts
-void TerrainGenerator::addToVerts(){
+void TerrainGenerator::addToVerts(std::vector<glm::vec3>& vertsArray){
 
     //use a new vector and then add that vector to a vector of 20,0000
 
@@ -62,40 +62,40 @@ void TerrainGenerator::addToVerts(){
             // x1y1z1
             // x2y1z2
             // x2y2z3
-            addPointToVector(p1, triangle_1);
-            addPointToVector(n1, triangle_1);
-            addPointToVector(getColor(n1, p1), triangle_1);
+            addPointToVector(p1, vertsArray);
+            addPointToVector(n1, vertsArray);
+            addPointToVector(getColor(n1, p1), vertsArray);
 
-            addPointToVector(p2, triangle_1);
-            addPointToVector(n2, triangle_1);
-            addPointToVector(getColor(n2, p2), triangle_1);
+            addPointToVector(p2, vertsArray);
+            addPointToVector(n2, vertsArray);
+            addPointToVector(getColor(n2, p2), vertsArray);
 
-            addPointToVector(p3, triangle_1);
-            addPointToVector(n3, triangle_1);
-            addPointToVector(getColor(n3, p3), triangle_1);
+            addPointToVector(p3, vertsArray);
+            addPointToVector(n3, vertsArray);
+            addPointToVector(getColor(n3, p3), vertsArray);
 
             // tris 2
             // x1y1z1
             // x2y2z3
             // x1y2z4
-            addPointToVector(p1, triangle_2);
-            addPointToVector(n1, triangle_2);
-            addPointToVector(getColor(n1, p1), triangle_2);
+            addPointToVector(p1, vertsArray);
+            addPointToVector(n1, vertsArray);
+            addPointToVector(getColor(n1, p1), vertsArray);
 
-            addPointToVector(p3, triangle_2);
-            addPointToVector(n3, triangle_2);
-            addPointToVector(getColor(n3, p3), triangle_2);
+            addPointToVector(p3, vertsArray);
+            addPointToVector(n3, vertsArray);
+            addPointToVector(getColor(n3, p3), vertsArray);
 
-            addPointToVector(p4, triangle_2);
-            addPointToVector(n4, triangle_2);
-            addPointToVector(getColor(n4, p4), triangle_2);
+            addPointToVector(p4, vertsArray);
+            addPointToVector(n4, vertsArray);
+            addPointToVector(getColor(n4, p4), vertsArray);
 
-            triangleData2DArray.push_back(triangle_1);
-            triangleData2DArray.push_back(triangle_2);
+//            vertsArray.push_back(triangle_1);
+//            vertsArray.push_back(triangle_2);
 
 
-            triangle_1.clear();
-            triangle_2.clear();
+//            triangle_1.clear();
+//            triangle_2.clear();
 
         }
     }
@@ -106,13 +106,13 @@ void TerrainGenerator::addToVerts(){
 
 //helper to set vertex array
 //Pass in scaled down image
-std::vector<std::vector<float>>  TerrainGenerator::newHeightMap(std::vector<RGBA> newHeightMapInfo){
+std::vector<glm::vec3>  TerrainGenerator::newHeightMap(std::vector<RGBA> newHeightMapInfo, std::vector<glm::vec3>& vertsArray){
     //clear current vertex...
     verts.clear();
     heightInfo.clear();
 
-    triangleData2DArray.clear();
-    triangleData2DArray.reserve(20000);
+    vertsArray.clear();
+    vertsArray.reserve(20000);
 
     for(RGBA& color: newHeightMapInfo){
         std::cout<< (color.r / 255.f)<< std::endl;
@@ -130,9 +130,9 @@ std::vector<std::vector<float>>  TerrainGenerator::newHeightMap(std::vector<RGBA
     heightMapHeight = 100;
     isResetTerrain = false;
 
-    TerrainGenerator::addToVerts();
+    TerrainGenerator::addToVerts(vertsArray);
 
-    return triangleData2DArray;
+    return vertsArray;
 }
 
 
@@ -143,34 +143,35 @@ std::vector<std::vector<float>>  TerrainGenerator::newHeightMap(std::vector<RGBA
 
 
 
-std::vector<std::vector<float>> TerrainGenerator::clearHeightMap(){
+std::vector<glm::vec3> TerrainGenerator::clearHeightMap(std::vector<glm::vec3>& vertsArray){
     verts.clear();
 
-    triangleData2DArray.clear();
-    triangleData2DArray.reserve(20000);
+    vertsArray.clear();
+    vertsArray.reserve(20000);
 
     isResetTerrain = true;
 
-    TerrainGenerator::addToVerts();
+    TerrainGenerator::addToVerts(vertsArray);
 
-    return triangleData2DArray;
+    return vertsArray;
 }
 
 
 
 // Generates the geometry of the output triangle mesh
-std::vector<std::vector<float>> TerrainGenerator::generateTerrain() {
+std::vector<glm::vec3> TerrainGenerator::generateTerrain(std::vector<glm::vec3>& vertsArray) {
 
-    triangleData2DArray.clear();
-    triangleData2DArray.reserve(20000);
+    vertsArray.clear();
+    vertsArray.reserve(20000);
 
     isResetTerrain = true;
 
-    verts.reserve(m_resolution * m_resolution * 6);
+//    verts.reserve(m_resolution * m_resolution * 6);
 
-    TerrainGenerator::addToVerts();
+    TerrainGenerator::addToVerts(vertsArray);
+    std::cout <<"Verts array after " << vertsArray[1000][0] << std::endl;
 
-    return triangleData2DArray;
+    return vertsArray;
 }
 
 

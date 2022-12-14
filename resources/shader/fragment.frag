@@ -53,20 +53,6 @@ struct LightColorPos {
 };
 //create a uniform input for the light data
 uniform LightColorPos lights[8];
-// INSPO FOR SHAPE STRUCT
-//struct ShapeData {
-//    mat4 ctm;
-//    mat4 ctmInv;
-//    mat3 normalMat;
-//    int type; //0 is sphere
-//    vec4 cAmbient;
-//    vec4 cDiffuse;
-//    vec4 cSpecular;
-//    float shininess;
-//    vec4 cReflective;
-//};
-//uniform ShapeData shapes[50]; //constrains it to only one shape being passed in
-//uniform int numShapes;
 
 struct TriangleData {
     vec3[3] points;
@@ -79,12 +65,23 @@ struct TriangleData {
 };
 uniform TriangleData triangles[50];
 uniform int numTriangles;
+uniform sampler1D triangle_sampler;
 
 
 //This main function raytraces a ray through the UV coordinate within a triangle on a full-screen quad. It raytraces only a single ray.
 void main() {
     //Initialize fragColor
     fragColor = vec4(vec3(0.f),1.f);
+//    fragColor = texture(triangle_sampler, vec2(2000,0));
+//    return;
+    if (texelFetch(triangle_sampler, 2000, 0).xyz.x == 0.f) {
+        fragColor = vec4(1.f);
+        return;
+    }/*
+    if (texture(triangle_sampler, vec2(2000,0)).r==0.f) {
+        fragColor = vec4(1.f);
+        return;
+    }*/
 
     //Find ray direction with UVK calculation in camera space and then put it in worldspace
     Ray ray1 = getOriginalRayWorldSpace();
