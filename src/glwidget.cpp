@@ -65,6 +65,9 @@ void GLWidget::initializeGL()
     m_camera.lookAt(QVector3D(1,1,1),QVector3D(0,0,0),QVector3D(0,0,1));
 
     m_program->release();
+
+    //set up the additional view and camera matrices
+    setupViewAndCamera();
 }
 
 
@@ -112,25 +115,25 @@ void GLWidget::paintGeometryPhong() {
     // Bind full-screen quad
     m_fullscreenQuadVao.bind();
 
-    glUniform4fv(glGetUniformLocation(m_shader, "cameraPositionWorld"), 1, &cameraPosition[0]);
+    GLuint cameraPositionWorld_loc = m_program->uniformLocation("cameraPositionWorld");
+    glUniform4fv(cameraPositionWorld_loc, 1, &cameraPosition[0]);
 
 
     //pass in the height angle and width angle
-    float widthAngle = heightAngle * float(width()) / float(height());
+    float widthAngle = camera.heightAngle * float(width()) / float(height());
     int widthAngle_loc = m_program->uniformLocation("widthAngle");
     int heightAngle_loc = m_program->uniformLocation("heightAngle");
     m_program->setUniformValue(widthAngle_loc, widthAngle);
-    m_program->setUniformValue(heightAngle_loc, heightAngle);
+    m_program->setUniformValue(heightAngle_loc, camera.heightAngle);
 
     // Pass in m_view and m_proj
     //TODO is m_camera * m_world the view matrix??? I feel like no
-    QMatrix4x4 viewMatrix = m_camera*m_world;
     int viewMatrix_loc = m_program->uniformLocation("viewMatrix");
     int viewMatrixInv_loc = m_program->uniformLocation("viewMatrixInverse");
-    m_program->setUniformValue(viewMatrix_loc, viewMatrix);
-    m_program->setUniformValue(viewMatrixInv_loc, QMatrix4x4::inverted(viewMatrix));
-    glUniformMatrix4fv(glGetUniformLocation(m_shader, "viewMatrix"), 1, GL_FALSE, &viewMatrix[0][0]);
-    glUniformMatrix4fv(glGetUniformLocation(m_shader, "viewMatrixInverse"), 1, GL_FALSE, &glm::inverse(viewMatrix)[0][0]);
+//    m_program->setUniformValue(viewMatrix_loc, viewMatrix);
+//    m_program->setUniformValue(viewMatrixInv_loc, glm::inverse(viewMatrix));
+    glUniformMatrix4fv(viewMatrix_loc, 1, GL_FALSE, &viewMatrix[0][0]);
+    glUniformMatrix4fv(viewMatrixInv_loc, 1, GL_FALSE, &glm::inverse(viewMatrix)[0][0]);
 
     //pass in ka, ks, and kd (global coefficients for ambient, specular, and diffuse lighting)
     int ka_loc = m_program->uniformLocation("ka");
@@ -225,6 +228,34 @@ void GLWidget::paintGeometryPhong() {
     glBindBuffer(GL_ARRAY_BUFFER, 0); //unbind buffer (though none should have been bound)
     // Unbind Vertex Array
     glBindVertexArray(0);
+}
+
+//calculate the view, perspective, and camera matrices
+//only called at the beginning of each scene
+void GLWidget::setupViewAndCamera() {
+    //If in need of debugging, use glm::lookAt() and glm::perspective()
+
+    //View matrix
+//    SceneCameraData cameraData = metaData.cameraData;
+    look = camera.look;
+    glm::vec4 w = glm::normalize(-camera.look);
+    glm::vec4 v = glm::normalize(camera.up - glm::dot(camera.up, w)*w);
+    glm::vec3 u = glm::cross(glm::vec3(v),glm::vec3(w));
+
+    //camera rotation matrix (initialized COLUMN-WISE)
+    cameraRotMat = {u[0],v[0],w[0],0,
+                              u[1],v[1],w[1],0,
+                              u[2],v[2],w[2],0,
+                              0,0,0,1};
+
+    cameraTransMat = {1,0,0,0,
+                                0,1,0,0,
+                                0,0,1,0,
+                                -camera.pos[0], -camera.pos[1], -camera.pos[2], 1};
+
+    viewMatrix = cameraRotMat * cameraTransMat;
+
+    cameraPosition = (glm::inverse(viewMatrix)*glm::vec4(0,0,0,1));
 }
 
 void GLWidget::resizeGL(int w, int h)

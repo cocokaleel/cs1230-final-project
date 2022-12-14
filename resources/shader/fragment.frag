@@ -80,6 +80,7 @@ void main() {
     //There is no recursion in GLSL,
     //Thus I had to do this iteratively :(
     if (intersection.shapeIndex != -1) {
+
         //If the ray hits something, get its Phong color
         fragColor = phongColor(intersection);
         Ray reflectedRay;

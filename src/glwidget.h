@@ -76,10 +76,29 @@ private:
     //TODO PUT THESE IN A SEPARATE FILE??
     //GLOBAL SCENE DATA: SHAPES, LIGHTS, AND CONSTANTS
     // Camera info
+    glm::vec3 look;
     glm::mat4 viewMatrix;
+    glm::mat4 projectionMatrix;
+    glm::mat4 cameraRotMat;
+    glm::mat4 cameraTransMat;
+    glm::vec4 cameraPosition;
 
-    glm::vec4 cameraPositionWorld;
-    float heightAngle = 30 * M_PI / 180.f;
+    struct cameraInfo {
+        glm::vec4 pos;
+        glm::vec4 look;
+        glm::vec4 up;
+
+        float heightAngle;
+    };
+    //camera from unit_sphere
+    cameraInfo camera = {
+        glm::vec4(3, 3, 3, 1),
+        glm::vec4(glm::vec4(0,0,0,1)-glm::vec4(3,3,3,1)),
+        glm::vec4(0,1,0,0),
+        30 * M_PI / 180.f
+    };
+
+    void setupViewAndCamera();
 
     //uniform lighting values ripped from recursiveSpheres3.xml
     // Global lighting uniforms
@@ -88,7 +107,7 @@ private:
      float ks = 0.54; //specular coefficient
 
      // holds the number of lights that exist in the scene (for looping purposes)
-     int numLights = 3;
+     int numLights = 1;
 
      //create a struct for holding light information
      struct LightColorPos {
@@ -100,35 +119,44 @@ private:
          float angle; //only for spot lights
          float penumbra; //only for spot lights
      };
-
-     LightColorPos lights[3] = {
+    //from unit sphere
+     LightColorPos lights[1] = {
          { //point light
              glm::vec4(1.f),//color;
-             glm::vec4(0.f), //dir //only for directional light
-             glm::vec4(10, 10, 10, 1.f),//pos; //only for point light and spot light
-             1,//lightType; //0 is directional, 1 is point, 2 is for spot
-             glm::vec3(1.5, 0, 0),//attenuation;
+             glm::vec4(-3,-2,-1,0), //dir //only for directional light
+             glm::vec4(0),//pos; //only for point light and spot light
+             0,//lightType; //0 is directional, 1 is point, 2 is for spot
+             glm::vec3(0),//attenuation;
              0,//angle; //only for spot lights
              0//penumbra;
          },
-         {//directional light 1
-              glm::vec4(1.f),//color;
-              glm::vec4(0.25, 1, -1, 0), //dir //only for directional light
-              glm::vec4(0),//pos; //only for point light and spot light
-              0,//lightType; //0 is directional, 1 is point, 2 is for spot
-              glm::vec3(0),//attenuation;
-              0,//angle; //only for spot lights
-              0//penumbra;
-         },
-         {//directional light 2
-              glm::vec4(1.f),//color;
-              glm::vec4(1, -1.8, -2, 0), //dir //only for directional light
-              glm::vec4(0),//pos; //only for point light and spot light
-              0,//lightType; //0 is directional, 1 is point, 2 is for spot
-              glm::vec3(0),//attenuation;
-              0,//angle; //only for spot lights
-              0//penumbra;
-         }
+//         { //point light
+//             glm::vec4(1.f),//color;
+//             glm::vec4(0.f), //dir //only for directional light
+//             glm::vec4(10, 10, 10, 1.f),//pos; //only for point light and spot light
+//             1,//lightType; //0 is directional, 1 is point, 2 is for spot
+//             glm::vec3(1.5, 0, 0),//attenuation;
+//             0,//angle; //only for spot lights
+//             0//penumbra;
+//         },
+//         {//directional light 1
+//              glm::vec4(1.f),//color;
+//              glm::vec4(0.25, 1, -1, 0), //dir //only for directional light
+//              glm::vec4(0),//pos; //only for point light and spot light
+//              0,//lightType; //0 is directional, 1 is point, 2 is for spot
+//              glm::vec3(0),//attenuation;
+//              0,//angle; //only for spot lights
+//              0//penumbra;
+//         },
+//         {//directional light 2
+//              glm::vec4(1.f),//color;
+//              glm::vec4(1, -1.8, -2, 0), //dir //only for directional light
+//              glm::vec4(0),//pos; //only for point light and spot light
+//              0,//lightType; //0 is directional, 1 is point, 2 is for spot
+//              glm::vec3(0),//attenuation;
+//              0,//angle; //only for spot lights
+//              0//penumbra;
+//         }
      };
 
 //made up shapes to test raytracing
@@ -141,12 +169,13 @@ private:
         float shininess;
         glm::vec4 cReflective;
     };
+    //from unit sphere
     ShapeData shapes[1] = {
         {
             glm::mat4( 1.0f ),//glm::mat4 ctm;
             0,//int type; //0 is sphere
             glm::vec4(0.f),//glm::vec4 cAmbient;
-            glm::vec4(0.75, 1, 0.75, 1),//glm::vec4 cDiffuse;
+            glm::vec4(1,0,0, 1),//glm::vec4 cDiffuse;
             glm::vec4(1.f),//glm::vec4 cSpecular;
             25,//float shininess;
             glm::vec4(0.75, 1, 0.75, 1)//glm::vec4 cReflective;
