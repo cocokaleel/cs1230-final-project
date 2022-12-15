@@ -115,11 +115,15 @@ void MainWindow::setupUI()
     // clearing canvas
     addPushButton(brushLayout, "Clear canvas", &MainWindow::onClearButtonClick);
 
+
     //using load image2
     addPushButton(brushLayout, "Load Image", &MainWindow::onUploadButtonClick);
 
     //using new heightmap
     addPushButton(brushLayout, "Use New Height Map", &MainWindow::onUseMapButtonClick);
+    //animateButtonOnClick
+    addPushButton(brushLayout, "Pause Camera Path", &MainWindow::onAnimateButtonClick);
+
 
     brushGroup -> setFixedSize(165, 524);
 
@@ -259,6 +263,16 @@ void MainWindow::onUploadButtonClick() {
     m_canvas->loadImageFromFile(settings.imagePath);
 
     m_canvas->settingsChanged();
+}
+
+void MainWindow::onAnimateButtonClick() {
+    if (glWidget->isAnimate) {
+        glWidget->isAnimate = false;
+        glWidget->m_elapsedTimer.restart();
+
+    } else {
+        glWidget->isAnimate = true;
+    }
 }
 
 

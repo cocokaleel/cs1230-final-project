@@ -58,6 +58,8 @@ private:
     void onValChangeRadiusSlider(int newValue);
     void onValChangeRadiusBox(int newValue);
 
+    void onAnimateButtonClick();
+
     void onUploadButtonClick();
 
 };

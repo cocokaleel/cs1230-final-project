@@ -17,6 +17,11 @@ GLWidget::~GLWidget() {}
 
 void GLWidget::initializeGL()
 {
+    //start camera
+
+    m_timer = startTimer(1000/60);
+    m_elapsedTimer.start();
+
     // GLEW is a library which provides an implementation for the OpenGL API
     // Here, we are setting it up
     glewExperimental = GL_TRUE;
@@ -77,6 +82,8 @@ void GLWidget::resetHeightMap(){
     m_terrainVbo.bind();
     m_terrainVbo.allocate(verts.data(),verts.size()*sizeof(GLfloat));
     m_terrainVbo.release();
+    m_elapsedTimer.restart();
+
     update();
 };
 
@@ -85,6 +92,8 @@ void GLWidget::useNewHeightMap(std::vector<RGBA> canvasData){
     m_terrainVbo.bind();
     m_terrainVbo.allocate(verts.data(),verts.size()*sizeof(GLfloat));
     m_terrainVbo.release();
+
+    m_elapsedTimer.restart();
     update();
 }
 
@@ -159,3 +168,41 @@ void GLWidget::rebuildMatrices() {
 
     update();
 }
+
+void GLWidget::timerEvent(QTimerEvent *event) {
+    if (isAnimate) {
+        spinInCircle();
+    }
+}
+
+void GLWidget::spinInCircle() {
+    m_camera.setToIdentity();
+
+    QMatrix4x4 rot;
+    rot.setToIdentity();
+    rot.rotate(-10 * m_angleX,QVector3D(0,0,1));
+
+    QVector3D eye = QVector3D(1,1,1);
+    eye = rot.map(eye);
+
+    rot.setToIdentity();
+    rot.rotate(-10 * m_angleY,QVector3D::crossProduct(QVector3D(0,0,1),eye));
+
+    eye = rot.map(eye);
+    eye = eye * m_zoom;
+
+    float camX = sin(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
+    float camY = sin(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
+    float camZ = cos(m_elapsedTimer.elapsed() * 0.001f) * 2.f;
+
+    m_camera.lookAt(QVector3D(camX, camY, camZ), QVector3D(0,0,0), QVector3D(0,-1,0));
+
+    m_proj.setToIdentity();
+    m_proj.perspective(45.0f, 1.0 * width() / height(), 0.01f, 100.0f);
+
+    update();
+}
+
+
+
+

@@ -9,9 +9,7 @@
 // Constructor
 TerrainGenerator::TerrainGenerator()
 {
-  // Task 8: turn off wireframe shading
   m_wireshade = false; // STENCIL CODE
-  // m_wireshade = false; // TA SOLUTION
 
   // Define resolution of terrain generation
   m_resolution = 100;
@@ -192,15 +190,12 @@ void TerrainGenerator::loadImageFromFile(const std::string &file) {
 // Takes a normalized (x, y) position, in range [0,1)
 // Returns a height value, z, by sampling a noise function
 float TerrainGenerator::getHeight(float x, float y) {
-
    float z = heightInfo[(heightMapWidth * y) + x]/4;
     return z ;
 }
 
 // Computes the normal of a vertex by averaging neighbors
 glm::vec3 TerrainGenerator::getNormal(int row, int col) {
-    // Task 9: Compute the average normal for the given input indices
-    //8 neighbors
     glm::vec3 normal = glm::vec3(0, 0, 0);
     std::vector<std::vector<int>> neighborOffsets = { //around the vertex
                                                       {-1, -1},
@@ -227,33 +222,5 @@ glm::vec3 TerrainGenerator::getNormal(int row, int col) {
 
 // Computes color of vertex using normal and, optionally, position
 glm::vec3 TerrainGenerator::getColor(glm::vec3 normal, glm::vec3 position) {
-    // Task 10: compute color as a function of the normal and position
-    //between 0,1.. because normals are NORMALIZED DUH
-//    if(position.z > .1){
-//        return glm::vec3(1,1,1);
-//    }
-//    else {
-//        return glm::vec3(.5,.5,.5);
-//    }
-
-//    if(glm::dot(normal, position) < .0001){
-//        return glm::vec3(1,1,1);
-//    }
-//    else {
-//        return glm::vec3(.5,.5,.5);
-//    }
-
-    if (glm::dot(normal, position) < .0001){
-         return glm::vec3(.5,.2,0.f);
-    }
-    else if(position.z > .2f){
-        return glm::vec3(.5,.2,1);
-    }
-    else {
-        return glm::vec3(.5,.5,.5);
-    }
-//    return glm::vec3(.5,.5,.5);
-
-    // Return white as placeholder
-    //return glm::vec3(1,1,1);
+    return glm::vec3(.5,.5,.5);
 }
